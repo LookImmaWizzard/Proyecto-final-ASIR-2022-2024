@@ -1,0 +1,35 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Appendix F. Adapt LAM to your corporate design</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"><link rel="home" href="index.html" title="LDAP Account Manager - Manual"><link rel="up" href="index.html" title="LDAP Account Manager - Manual"><link rel="prev" href="apes02.html" title="Schema update"><link rel="next" href="apg.html" title="Appendix G. Clustering LAM"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Appendix F. Adapt LAM to your corporate design</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="apes02.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apg.html">Next</a></td></tr></table><hr></div><div class="appendix"><div class="titlepage"><div><div><h1 class="title"><a name="idm7127"></a>Appendix F. Adapt LAM to your corporate design</h1></div></div></div><p>There are cases where you might want to change LAM's default
+  look'n'feel to better integrate it in your company network. Changes can be
+  done like this:</p><p><span class="bold"><strong>Change colors, fonts and other parts with custom
+  CSS</strong></span></p><p>You can integrate custom CSS files in LAM. It is recommended to write
+  a separate CSS file instead of modifying LAM's default files.</p><p>The CSS files are located in</p><div class="literallayout"><p> DEB/RPM: /usr/share/ldap-account-manager/style<br>
+ tar.bz2: style<br>
+</p></div><p>LAM will automatically integrate all CSS files in alphabetical order.
+  E.g. you can create a file called "900_myCompany.css" which will be added as
+  last file.</p><p>In many cases it can be sufficient to overwrite some CSS variables.
+  See top of <a class="ulink" href="https://github.com/LDAPAccountManager/lam/blob/develop/lam/style/500_layout.css" target="_top">500_layout.css</a>
+  for defined variables.</p><p>Example:</p><p>This will change the background color of all pages to grey.</p><pre class="programlisting">:root {
+    --lam-background-color-default: #E7E7E7;
+}
+</pre><p>Change LAM logo:</p><pre class="programlisting">div.lam-header-left img {
+    background: url("../graphics/key.svg") center no-repeat;
+    box-sizing: border-box;
+    width: 32px;
+    height: 32px;
+    padding-left: 32px;
+}
+</pre><p>You can use the same way to change font/button colors and more.</p><p><span class="bold"><strong>Change header bar to mark different
+  environments</strong></span></p><pre class="programlisting">.lam-header {
+    box-shadow: 0px 3px 2px -2px red;
+}
+</pre><p><span class="bold"><strong>Other images</strong></span></p><p>All images are located in</p><div class="literallayout"><p> DEB/RPM: /usr/share/ldap-account-manager/graphics<br>
+ tar.bz2: graphics</p></div><p>Please note that if you replace images then you need to reapply your
+  changes every time you upgrade LAM.</p><p><span class="bold"><strong>Special changes with custom
+  JavaScript</strong></span></p><p>In rare cases it might not be sufficient to write custom CSS or
+  replace some image files. E.g. you might want to add custom content to all
+  pages.</p><p>For these cases you can add a custom JavaScript file that contains
+  your code.</p><p>The JavaScript files are located in</p><div class="literallayout"><p> DEB/RPM: /usr/share/ldap-account-manager/templates/lib<br>
+ tar.bz2: templates/lib</p></div><p>LAM will automatically integrate all .js files in alphabetical order.
+  E.g. you can create a file called "900_myCompany.js" which will be added as
+  last file.</p><p><span class="bold"><strong>Self service</strong></span></p><p>See <a class="link" href="ch07s03.html#selfServiceBasicSettings" title="General settings">here</a> for self
+  service customisations.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apes02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="apg.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Schema update </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Appendix G. Clustering LAM</td></tr></table></div></body></html>

@@ -1,0 +1,24 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Functional issues</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"><link rel="home" href="index.html" title="LDAP Account Manager - Manual"><link rel="up" href="aph.html" title="Appendix H. Troubleshooting"><link rel="prev" href="aphs02.html" title="Reset IP restriction"><link rel="next" href="aphs04.html" title="Performance issues"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Functional issues</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="aphs02.html">Prev</a> </td><th width="60%" align="center">Appendix H. Troubleshooting</th><td width="20%" align="right"> <a accesskey="n" href="aphs04.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="idm7241"></a>Functional issues</h2></div></div></div><p><span class="bold"><strong>Size limit</strong></span></p><p>You will get a message like "LDAP sizelimit exceeded, not all
+    entries are shown." when you hit the LDAP search limit.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>OpenLDAP: See the <a class="link" href="apc.html#size_limit_exceeded">OpenLDAP
+        settings</a> to fix this.</p></li><li class="listitem"><p>389 server: set nsslapd-sizelimit in cn=config (may also be set
+        per user)</p></li><li class="listitem"><p>other LDAP servers: please see your server documentation</p></li></ul></div><div class="literallayout"><p><br>
+</p></div><p><span class="bold"><strong>Invalid syntax errors:</strong></span></p><p>If you get any strange errors like "Invalid syntax" or "Invalid DN
+    syntax" please check if your LDAP schema matches LAM's
+    requirements.</p><div class="literallayout"><p><br>
+</p></div><p><span class="bold"><strong>Schema test:</strong></span></p><p>This can be done by running "Tools" -&gt; "Tests" -&gt; "Schema
+    test" inside LAM.</p><p>If there are any object classes or attributes missing you will get a
+    notice. See <a class="link" href="apa.html" title="Appendix A. LDAP schema files">LDAP schema files</a> for a list
+    of used schemas. You may also want to deactivate unused modules in your
+    LAM server profile (tab "Modules").</p><div class="screenshot"><div class="mediaobject"><img src="images/schemaTest.png"></div></div><div class="literallayout"><p><br>
+</p></div><p><span class="bold"><strong>LDAP Logging:</strong></span></p><p>If your schema is correct you can turn on LDAP logging to get more
+    detailed error messages from your LDAP server.</p><div class="literallayout"><p><br>
+</p></div><p><span class="bold"><strong>OpenLDAP logging:</strong></span></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>slapd.conf: In /etc/ldap/slapd.conf turn logging on with the
+        line "loglevel 256".</p></li><li class="listitem"><p>slapd.d: In /etc/ldap/slapd.d/cn=config.ldif please change the
+        attribute "olcLogLevel" to "Stats". Please add a line "olcLogLevel:
+        Stats" if the attribute is missing.</p></li></ul></div><p>After changing the configuration please restart OpenLDAP. It usually
+    uses /var/log/syslog for log output.</p><div class="literallayout"><p><br>
+</p></div><p><span class="bold"><strong>PHP logging</strong></span></p><p>Sometimes it can help to enable PHP logging inside LAM. You can do
+    this in the <a class="link" href="ch03.html#conf_logging" title="Logging">logging area</a> of LAM's main
+    configuration. Set the logging option to "all" and check if there are any
+    messages printed in your browser window. Please note that not every notice
+    message is an error but it may help to find the problem.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="aphs02.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="aph.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="aphs04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Reset IP restriction </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Performance issues</td></tr></table></div></body></html>

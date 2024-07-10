@@ -1,0 +1,11 @@
+global:
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+    - targets: ['localhost:9090']
+
+  - job_name: 'node'
+    static_configs:
+    - targets: ['srv.ismael-server.ddns.net:9100']
+#    - targets: ['server2.example.com:9100']

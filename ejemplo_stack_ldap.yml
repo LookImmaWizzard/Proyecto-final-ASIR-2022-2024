@@ -1,0 +1,61 @@
+#ESTE ARCHIVO YAML NO ES VALIDO PARA DESPLEGAR NINGUN POD, Y SE INCLUYE SOLO COMO DOCUMENTACION ADICIONAL DEL PROYECTO.
+#LAS VARIABLES DE ENTORNO DE LOS CONTENEDORES HAN SIDO SUSTITUIDAS POR VARIABLES DE BASH, Y DEBERIAN SER MODIFICADAS CON LOS VALORES DESEADOS POR EL USUARIO. 
+apiVersion: v1
+kind: Pod
+metadata:
+ labels:
+   app: proyecto_stackldap
+ name: proyecto_stackldap #NOMBRE QUE RECIBIRA EL POD
+spec:
+ volumes: #DECLARACION DE VOLUMENES
+ - name: lam_config #NOMBRE DEL VOLUMEN
+   hostPath:
+     path: /root/podman/proyecto/stack_ldap/volumes/lam/lam_config #DIRECTORIO DEL HOST QUE ALOJA EL VOLUMEN
+ - name: openldap_config #NOMBRE DEL VOLUMEN
+   hostPath:
+     path: /root/podman/proyecto/stack_ldap/volumes/openldap/config
+ - name: openldap_database
+   hostPath:
+     path: /root/podman/proyecto/stack_ldap/volumes/openldap/database
+ containers:
+ - env: #VAIRABLES DE ENTORNO
+   - name: LDAP_DOMAIN #NOMBRE DE LA VARIABLE
+     value: $LDAP_DOMAIN #VALOR DE LA VARIABLE
+   - name: LDAP_BASE_DN
+     value: $LDAP_BASE_DN
+   - name: LDAP_SERVER
+     value: ldap://127.0.0.1:389
+   - name: LAM_PASSWORD
+     value: $LAM_PASSWORD
+   - name: LAM_LANG
+     value: es_ES
+   - name: LAM_SKIP_PRECONFIGURE
+     value: false
+   image: ghcr.io/ldapaccountmanager/lam:latest #IMAGEN A USAR POR EL CONTENEDOR
+   securityContext: #OPCIONES DE CONTEXTO DE SEGURIDAD
+    fsGroup: 33 #UID DEL USUARIO EJECUTOR DEL CONTENEDOR
+   name: lam #NOMBRE DEL CONTENEDOR
+   tty: true
+   volumeMounts:
+   - mountPath: /var/lib/ldap-account-manager/config:Z #PUNTO DE MONTAJE DEL VOLUMEN EN EL CONTENEDOR
+     name: lam_config #VOLUMEN A USAR, DECLARADO PREVIAMENTE
+ - env: #VARIABLES DE ENTORNO DEL CONTENEDOR
+   - name: LDAP_DOMAIN
+     value: $LDAP_DOMAIN
+   - name: LDAP_ADMIN_PASSWORD
+     value: $LDAP_ADMIN_PASSWORD
+   - name: KEEP_EXISTING_CONFIG
+     value: "true"
+   - name: LDAP_ORGANISATION
+     value: $LDAP_ORGANISATION
+   - name: LDAP_CONFIG_PASSWORD
+     value: $LDAP_CONFIG_PASSWORD
+   image: docker.io/osixia/openldap:latest #IMAGEN A USAR POR EL CONTENEDOR
+   securityContext:
+   name: openldap #NOBMRE DEL CONTENEDOR
+   tty: true
+   volumeMounts:
+   - mountPath: /etc/ldap/slapd.d:Z #PUNTO DE MONTAJE DEL CONTENEDOR
+     name: openldap_config #VOLUMEN A USAR DECLARADO PREVIAMENTE
+   - mountPath: /var/lib/ldap:Z
+     name: openldap_database

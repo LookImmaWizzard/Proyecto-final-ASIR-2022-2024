@@ -1,0 +1,89 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Chapter 3. Configuration</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"><link rel="home" href="index.html" title="LDAP Account Manager - Manual"><link rel="up" href="index.html" title="LDAP Account Manager - Manual"><link rel="prev" href="ch02s04.html" title="Migration to a new server"><link rel="next" href="ch03s02.html" title="Server profiles"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 3. Configuration</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch02s04.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch03s02.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="a_configuration"></a>Chapter 3. Configuration</h1></div></div></div><p>After you <a class="link" href="ch02.html" title="Chapter 2. Installation">installed</a> LAM you can
+  configure it to fit your needs. The complete configuration can be done
+  inside the application. There is no need to edit configuration files.</p><p>Please point you browser to the location where you installed LAM. E.g.
+  for Debian/Ubuntu/RPM this is http://yourServer/lam. If you installed LAM
+  via the tar.bz2 then this may vary. You should see the following
+  page:</p><div class="screenshot"><div class="mediaobject"><img src="images/login.png"></div></div><p>If you see an error message then you might need to install an
+  additional PHP extension. Please follow the instructions and reload the page
+  afterwards.</p><p>Now you are ready to configure LAM. Click on the "LAM configuration"
+  link to proceed.</p><div class="screenshot"><div class="mediaobject"><img src="images/configOverview.png"></div></div><p>Here you can change LAM's general settings, setup server profiles for
+  your LDAP server(s) and configure the <a class="link" href="ch07.html" title="Chapter 7. Self service (LAM Pro)">self
+  service</a> (LAM Pro). You should start with the general settings and
+  then setup a server profile.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="generalSettings"></a>General settings</h2></div></div></div><p>After selecting "Edit general settings" you will need to enter the
+    <a class="link" href="apb.html#a_configPasswords" title="LAM configuration passwords">master configuration password</a>.
+    The default password for new installations is "lam". Now you can edit the
+    general settings.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm710"></a>Configuration Database</h3></div></div></div><p>This defines where LAM should store the configuration settings. By
+      default, local file system is used. If you have installed the PHP PDO
+      extension incl. MySQL then you can also select MySQL here. This will
+      then store all data (server profiles, account profiles, PDF structures,
+      ...) in the database.</p><p>Exceptions:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Configuration storage options</p></li><li class="listitem"><p>LAM Pro license</p></li><li class="listitem"><p>CA certificates</p></li></ul></div><p>This is very useful when running LAM cloud native e.g. inside
+      Docker.</p><div class="screenshot"><div><img src="images/configGeneral9.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm724"></a>License (LAM Pro only)</h3></div></div></div><p>This is only required when you run LAM Pro. Please enter the
+      license key from your <a class="ulink" href="https://www.ldap-account-manager.org/lamcms/user/me" target="_top">customer
+      profile</a>. In case you have purchased multiple licenses please
+      only enter one license key block per installation.</p><p>When you entered the license key then the license details can be
+      seen on LAM configuration overview page.</p><p>By default, LAM Pro will show a warning message on the login page
+      3 weeks before expiration. You can disable this here and/or send out an
+      email instead.</p><div class="screenshot"><div class="mediaobject"><img src="images/configGeneral7.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm734"></a>Security settings</h3></div></div></div><p>Here you can set a time period after which inactive sessions are
+      automatically invalidated. The selected value represents minutes of
+      inactivity.</p><p>If you do not want to expose why the login to LAM failed then
+      activate "Hide LDAP details on failed logins". This way users will not
+      see if their account was not found or is e.g. locked.</p><p>You may also set a list of IP addresses which are allowed to
+      access LAM. The IPs can be specified as full IP (e.g. 123.123.123.123)
+      or with the "*" wildcard (e.g. 123.123.123.*). Users which try to access
+      LAM via an untrusted IP only get blank pages. There is a separate field
+      for LAM Pro self service.</p><div class="screenshot"><div class="mediaobject"><img src="images/configGeneral1.png"></div></div><p><a name="conf_sslCert"></a><span class="bold"><strong>SSL certificate
+      setup:</strong></span></p><p>By default, LAM uses the CA certificates that are preinstalled on
+      your system. This will work if you connect via SSL/TLS to an LDAP server
+      that uses a certificate signed by a well-known CA. In case you use your
+      own CA (e.g. company internal CA) you can import the CA certificates
+      here.</p><p>Please note that this can affect other web applications on the
+      same server if they require different certificates. There seem to be
+      problems on Debian/Ubuntu systems and you may also need to restart
+      Apache. In case of any problems please delete the uploaded certificates
+      and use the <a class="link" href="apbs03.html#ssl_certSystem" title="Setup SSL certificates on system level">system setup</a>.</p><p>You can either upload a DER/PEM formatted certificate file or
+      import the certificates directly from an LDAP server that is available
+      with LDAP+SSL (ldaps://). LAM will automatically override system
+      certificates if at least one certificate is uploaded/imported.</p><p>The whole certificate list can be downloaded in PEM format. You
+      can also delete single certificates from the list.</p><p>Please note that you might need to restart your webserver if you
+      do any changes to this configuration.</p><div class="screenshot"><div class="mediaobject"><img src="images/configGeneral4.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm755"></a>Password policy</h3></div></div></div><p>This allows you to specify a central password policy for LAM. The
+      policy is valid for all password fields inside LAM admin (excluding tree
+      view) and LAM self service. Configuration passwords do not need to
+      follow this policy.</p><div class="screenshot"><div class="mediaobject"><img src="images/configGeneral2.png"></div></div><p>You can set the minimum password length and also the complexity of
+      the passwords.</p><p><span class="bold"><strong>External password check</strong></span></p><p>Please note that this option is only displayed if you have
+      installed the PHP Curl extension for your web server.</p><p>This will validate passwords using an external service. LAM
+      supports the protocol used by <a class="ulink" href="https://haveibeenpwned.com/API/v2#SearchingPwnedPasswordsByRange" target="_top">Have
+      I been Pwned</a>. You can use the service directly or setup any
+      custom service with the same API. If the service reports an error LAM
+      will log an error message and the password will be accepted.</p><p>Example URL:
+      https://api.pwnedpasswords.com/range/{SHA1PREFIX}</p><p>LAM will build a SHA1 hash of the password and send parts of it to
+      the service.</p><p>The configured URL must contain the wildcard "{SHA1PREFIX}" which
+      will be replaced with the 5 character hash prefix. The service must then
+      return a list of text lines in the format "&lt;hash
+      suffix&gt;:&lt;number&gt;".</p><p>"&lt;hash suffix&gt;" needs to be the suffix of a known insecure
+      password. The "&lt;number&gt;" can be any numeric value and will be
+      ignored by LAM.</p><p>Example:</p><p>Password hash: 21BD10018A45C4D1DEF81644B54AB7F969B88D65</p><p>Hash prefix sent to service: 21BD1</p><p>Returned line: 0018A45C4D1DEF81644B54AB7F969B88D65:1</p><p>This will reject the password.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="conf_logging"></a>Logging</h3></div></div></div><p>LAM can log events (e.g. user logins). You can use e.g. system
+      logging (syslog for Unix, event viewer for Windows) or log to a separate
+      file. Please note that LAM may log sensitive data (e.g. passwords) at
+      log level "Debug". Production systems should be set to "Warning" or
+      "Error".</p><p>The PHP error reporting is only for developers. By default LAM
+      does not show PHP notice messages in the web pages. You can select to
+      use the php.ini setting here or printing all errors and notices.</p><p>Log destinations:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>File: all messages will be written to the given file. LAM will
+          create it if not yet existing.</p></li><li class="listitem"><p>Syslog: uses local system logging (syslog for Unix, event
+          viewer for Windows)</p></li><li class="listitem"><p>Remote: sends log messages to a remote server that supports
+          the Unix <a class="ulink" href="https://www.rsyslog.com/" target="_top">remote
+          Syslogd</a> protocol. Please enter destination as "server:port",
+          e.g. "myserver:123".</p></li><li class="listitem"><p>No logging: disabled logging</p></li></ul></div><div class="screenshot"><div class="mediaobject"><img src="images/configGeneral3.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mailSetup"></a>Mail options (LAM Pro)</h3></div></div></div><p>Here you can configure the mail server settings. If you do not set
+      a mail server then LAM will try to use a locally installed one (e.g.
+      postfix, exim, sendmail).</p><p>SMTP setup:</p><p>Mail server: enter name + port separated by ":". E.g. "server:25"
+      will use "server" on port 25.</p><p>User name: enter the user name if your SMTP server requires
+      authentication</p><p>Password: enter the password for the user above</p><p>Encryption protocol: Use TLS when unsure. SSL is only for older
+      servers and deprecated. The no encryption setting should not be used for
+      production installations.</p><div class="screenshot"><div class="mediaobject"><img src="images/configGeneral6.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="confmain_webauthn"></a>WebAuthn/FIDO2 devices</h3></div></div></div><p>See the <a class="link" href="apbs09.html" title="WebAuthn/FIDO2">WebAuthn/FIDO2 appendix</a>
+      for an overview about WebAuthn/FIDO2 in LAM.</p><p>Here you can delete any webauthn device registrations. This
+      section is only shown if at least one device is registered.</p><p>Enter a part of the user's DN in the input box and perform a
+      search. LAM will show users and devices that match the search. You can
+      then delete a device registration. If the user has no more registered
+      devices then LAM will ask for registration on next login.</p><p>Note: You cannot add any device here. This can only be done by the
+      user during login, <a class="link" href="ch05s10.html#tool_webauthn">webauthn tool</a> or
+      self service.</p><div class="screenshot"><div class="mediaobject"><img src="images/configGeneral8.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm821"></a>Change master password</h3></div></div></div><p>If you would like to change the master configuration password then
+      enter a new password here.</p><div class="screenshot"><div class="mediaobject"><img src="images/configGeneral5.png"></div></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch02s04.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ch03s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Migration to a new server </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Server profiles</td></tr></table></div></body></html>

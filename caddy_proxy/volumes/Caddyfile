@@ -1,0 +1,23 @@
+asirpronc.ismael-server.ddns.net {
+	reverse_proxy proyecto_stacknc:80
+}
+
+asirprolam.ismael-server.ddns.net {
+        reverse_proxy proyecto_stackldap:80
+}
+
+asirprowm.ismael-server.ddns.net {
+        reverse_proxy 192.168.1.120:10000
+}
+
+asirprocp.ismael-server.ddns.net {
+        reverse_proxy 192.168.1.120:9090
+}
+
+asirpropga.ismael-server.ddns.net {
+        reverse_proxy proyecto_stacknc:81
+}
+
+asirprogrf.ismael-server.ddns.net {
+        reverse_proxy proyecto_stackgrafana:3000
+}

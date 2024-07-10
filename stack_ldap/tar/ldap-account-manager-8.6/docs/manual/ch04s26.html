@@ -1,0 +1,101 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Custom fields (LAM Pro)</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"><link rel="home" href="index.html" title="LDAP Account Manager - Manual"><link rel="up" href="ch04.html" title="Chapter 4. Managing entries in your LDAP directory"><link rel="prev" href="ch04s25.html" title="Custom types (LAM Pro)"><link rel="next" href="ch04s27.html" title="Custom scripts (LAM Pro)"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Custom fields (LAM Pro)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch04s25.html">Prev</a> </td><th width="60%" align="center">Chapter 4. Managing entries in your LDAP directory</th><td width="20%" align="right"> <a accesskey="n" href="ch04s27.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mod_customFields"></a>Custom fields (LAM Pro)</h2></div></div></div><p>This module allows you to manage LDAP attributes that are not
+    covered by the other LAM modules (e.g. if you use a custom LDAP schema).
+    You can fully define how your input fields look like:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Label</p></li><li class="listitem"><p>LDAP attribute name</p></li><li class="listitem"><p>Unique name for field</p></li><li class="listitem"><p>Help text</p></li><li class="listitem"><p>Read-only display</p></li><li class="listitem"><p>Field type: text, password, text area, checkbox, radio buttons,
+        select list, file upload, LDAP date (and time), constant</p></li><li class="listitem"><p>Validation via regular expression</p></li><li class="listitem"><p>Error message if validation fails</p></li></ul></div><p>Limitations:</p><p>Custom fields cannot manage</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>structural object classes (supported by <a class="link" href="ch04s25.html" title="Custom types (LAM Pro)">Custom types</a>)</p></li><li class="listitem"><p>attributes that require validation rules across multiple
+        attributes or cannot be described by a simple regular
+        expression</p></li></ul></div><p><span class="bold"><strong>Activating the custom fields
+    module:</strong></span></p><p>You may specify custom fields for all of your account types. Please
+    enter tab "Modules" in your server profile. Now activate the "Custom
+    fields (customFields)" module for all needed account types.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields14.png"></div></div><p><span class="bold"><strong>Setting label and icon:</strong></span></p><p>You may set the label that is displayed e.g. on the tab when editing
+    an account. It is also possible to specify an icon (must be a valid URL
+    like "/images/icon.png" or "http://server/images/icon.png"). The icon size
+    should be 32x32 pixels.</p><p>LAM will display a default icon and "Custom fields" as label if you
+    do not enter any values.</p><p>You may also specify how LAM displays custom fields when there are
+    multiple field groups. The default is accordion view where you can switch
+    field groups by clicking on the title. You may also deactivate this mode.
+    Then all field groups are displayed one below the other.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields25.png"></div></div><p><span class="bold"><strong>Defining groups:</strong></span></p><p>All input fields are divided into groups. A group may contain one or
+    more object classes and allows you to add/remove a certain set of input
+    fields.</p><p>E.g. you may define two groups - "My application A" and "My
+    application B" - that manage different LDAP attributes and object classes.
+    This way you will be able to control both attribute sets
+    independently.</p><p>To create a group please edit your server profile and switch to tab
+    "Module settings". You will see the section "Custom fields" which allows
+    you to add new groups. Now select your account type (e.g. Users) and
+    specify an alias for your group. This alias will be printed as group
+    header when you later edit an account in the admin interface.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields15.png"></div></div><p>After you created your new group you can setup the managed object
+    classes. If you specify any object classes then you will later be able to
+    add/remove a complete set of attributes including their object
+    classes.</p><p>Skipping the object classes field is only useful if you want to
+    manage some attributes that are not yet supported by LAM but there is
+    already a LAM module that manages the object class.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields16.png"></div></div><p>The group may look like when you edit a user.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields19.png"></div></div><div class="screenshot"><div class="mediaobject"><img src="images/customFields20.png"></div></div><p><span class="bold"><strong>Adding fields:</strong></span></p><p>Now you can add a new field that manages an LDAP attribute. Simply
+    fill the fields and press on "Add".</p><p>Please note that the field name cannot be changed later. It is the
+    unique ID for this field.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields17.png"></div></div><p>Examples for fields and their representation:</p><p><span class="bold"><strong>Text field:</strong></span></p><p>Text fields allow to specify a <a class="link" href="ch04s26.html#customFields_validation_expressions_admin">validation
+    expression</a> and error message.</p><p>You can also enable auto-completion. In this case LAM will search
+    all accounts for the given attribute and provide auto-completion hints
+    when the user edits this field. This should only be used if there is a
+    limited number of different values for this attribute.</p><p>In case your field is a date value you can show a calendar for easy
+    editing.</p><p>Example calendar formats:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>d.m.Y: 31.12.2025</p></li><li class="listitem"><p>Y-m-d: 2025-12-31</p></li><li class="listitem"><p>d M, y: 31 Dec, 25</p></li><li class="listitem"><p>d MM, Y: 31 December, 2025</p></li></ul></div><p>You can escape wildcards with "\". E.g. "d.m.Y \d" will result in
+    "31.12.2025 d".</p><p>Profile editor: For multi-value fields you can separate multiple
+    values by semicolon in profile editor (e.g. "value1; value2"). LAM will
+    split the text when loading the profile.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields2.png"></div></div><p>Presentation:</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields3.png"></div></div><p><span class="bold"><strong>Password field:</strong></span></p><p>You can also manage custom password fields. LAM Pro will display two
+    fields where the user must enter the same password. You can hash the
+    password if needed.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields4.png"></div></div><p>Presentation:</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields5.png"></div></div><p><span class="bold"><strong>Text area:</strong></span></p><p>This adds a multi-line field. The options are similar to text
+    fields. Additionally, you can set the size with the number of columns and
+    rows.</p><p>Please note that the <a class="link" href="ch04s26.html#customFields_validation_expressions_admin">validation
+    expression</a> should be set to multi-line. This is done by adding "m"
+    at the end.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields6.png"></div></div><p>Presentation:</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields7.png"></div></div><p><span class="bold"><strong>Checkbox:</strong></span></p><p>Sometimes you may want to allow only yes/no values for your LDAP
+    attributes. This can be represented by a checkbox. You can specify the
+    values for checked and unchecked. The default value is set if the LDAP
+    attribute has no value.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields8.png"></div></div><p>Presentation:</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields9.png"></div></div><p><span class="bold"><strong>Radio buttons:</strong></span></p><p>This displays a list of radio buttons where the user can select one
+    value.</p><p>You can specify a mapping of LDAP attribute values and their display
+    (label) on the Self Service page. To add more mapping fields please press
+    "Add more mapping fields".</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields10.png"></div></div><p>Presentation:</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields11.png"></div></div><p><span class="bold"><strong>Select list:</strong></span></p><p>Select lists allow the user to select a value in a large list of
+    options. The definition of the possible values and their display is
+    similar to radio buttons.</p><p>You can also allow multiple values.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields12.png"></div></div><p>Presentation:</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields13.png"></div></div><div class="screenshot"><div class="mediaobject"><img src="images/customFields18.png"></div></div><p><span class="bold"><strong>LDAP search select list</strong></span></p><p>This is similar to "Select list" but the option are read from LDAP.
+    You can use this to define e.g. a DN selection list. Multiple values are
+    supported.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields26.png"></div></div><p>LDAP suffix: The LDAP DN that is used as starting point to search
+    for LDAP entries.</p><p>LDAP filter: Only LDAP entries that match this filter will be used.
+    If all entries should be used then use "(objectclass=*)".</p><p>Attribute name: The values of this attribute will be used to build
+    the selection list.</p><p>Display attributes: List of attributes to show as label for the
+    options in select box. Attribute wildcards are surrounded by "$", e.g.
+    "$cn$" will be replaced by "cn" attribute. Default is "$dn$".</p><p>Presentation:</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields27.png"></div></div><div class="literallayout"><p><br>
+</p></div><p><span class="bold"><strong>LDAP date</strong></span></p><p>Use this for LDAP attributes with syntax "Generalized Time"
+    (1.3.6.1.4.1.1466.115.121.1.24).</p><p>LAM will automatically set hour/minute/second to "0". If this is not
+    intended please use type "LDAP date and time".</p><div class="screenshot"><div><img src="images/customFields30.png"></div></div><p>Presentation:</p><p>LAM will display a calendar to select the date.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields31.png"></div></div><div class="literallayout"><p><br>
+</p></div><p><span class="bold"><strong>LDAP date and time</strong></span></p><p>Use this for LDAP attributes with syntax "Generalized Time"
+    (1.3.6.1.4.1.1466.115.121.1.24).</p><p>LAM can convert the displayed value to the configured time zone of
+    your server/self service profile. In this case, please activate "Display
+    in local time".</p><div class="screenshot"><div><img src="images/customFields33.png"></div></div><p>Presentation:</p><p>LAM will display a calendar to select the date and time.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields32.png"></div></div><div class="literallayout"><p><br>
+</p></div><p><span class="bold"><strong>Constant value</strong></span></p><p>This will set the attribute to a constant value. You can also
+    specify wildcards to inject other attribute's values.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields28.png"></div></div><p>Wildcards:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>%attribute%: attribute value</p></li><li class="listitem"><p>@attribute@: first character of attribute</p></li><li class="listitem"><p>?attribute?: first character of attribute in lower case</p></li><li class="listitem"><p>!attribute!: first character of attribute in upper case</p></li><li class="listitem"><p>??attribute??: attribute in lower case</p></li><li class="listitem"><p>!!attribute!!: attribute in upper case</p></li><li class="listitem"><p>((attribute)): space if attribute is set</p></li><li class="listitem"><p>§attribute|;§; attribute values separated by ";" (you can set
+        other separators if you want)</p></li></ul></div><p>Examples for attributes gn="Steve", sn="Miller" and
+    memberUid=("user1", "user2") (specified value -&gt; resulting LDAP
+    value):</p><div class="table"><a name="idm4490"></a><p class="title"><b>Table 4.3. </b></p><div class="table-contents"><table border="1"><tr>
+        <th>Constant value</th>
+
+        <th>Resulting LDAP value</th>
+      </tr><tr>
+        <td>my constant</td>
+
+        <td>my constant</td>
+      </tr><tr>
+        <td>%gn%</td>
+
+        <td>Steve</td>
+      </tr><tr>
+        <td>%gn%((gn))%sn%</td>
+
+        <td>Steve Miller (would be "Miller" if gn is empty)</td>
+      </tr><tr>
+        <td>§memberUid|, §</td>
+
+        <td>user1, user2</td>
+      </tr></table></div></div><br class="table-break"><p></p><p>Presentation:</p><p>The LDAP value will be shown as text.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields29.png"></div></div><div class="literallayout"><p><br>
+</p></div><p><span class="bold"><strong>File upload:</strong></span></p><p>This is used for binary data. You can restrict uploaded data to a
+    given file extension and set the maximum file size.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields21.png"></div></div><p>Presentation:</p><p>The uploaded data may also be downloaded via LAM.</p><div class="screenshot"><div class="mediaobject"><img src="images/customFields22.png"></div></div><div class="literallayout"><p><br>
+</p></div><p><a name="customFields_validation_expressions_admin"></a><span class="bold"><strong>Validation expressions:</strong></span></p><p>The validation expressions follow the standard of <a class="ulink" href="http://perldoc.perl.org/perlre.html" target="_top">Perl regular
+    expressions</a>. They start and end with a "/". The beginning of a
+    line is specified by "^" and the end by "$".</p><p>Examples:</p><p>/^[a-z0-9]+$/ allows small letters and numbers. The value must not
+    be empty ("+").</p><p>/^[a-z0-9]+$/i allows small and capital letters ("i" at the end
+    means ignore case) and numbers. The value must not be empty ("+").</p><p>Special characters that must be escaped with "\": "\", ".", "(",
+    ")"</p><p>E.g. /^[a-z0-9\.]$/i</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch04s25.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch04.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch04s27.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Custom types (LAM Pro) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Custom scripts (LAM Pro)</td></tr></table></div></body></html>

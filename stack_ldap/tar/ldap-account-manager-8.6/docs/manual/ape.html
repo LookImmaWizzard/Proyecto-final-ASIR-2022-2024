@@ -1,0 +1,32 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Appendix E. Setup password self reset schema (LAM Pro)</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"><link rel="home" href="index.html" title="LDAP Account Manager - Manual"><link rel="up" href="index.html" title="LDAP Account Manager - Manual"><link rel="prev" href="apds06.html" title="Troubleshooting"><link rel="next" href="apes02.html" title="Schema update"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Appendix E. Setup password self reset schema (LAM Pro)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="apds06.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apes02.html">Next</a></td></tr></table><hr></div><div class="appendix"><div class="titlepage"><div><div><h1 class="title"><a name="a_passwordSelfResetSchema"></a>Appendix E. Setup password self reset schema (LAM Pro)</h1></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="passwordSelfResetSchema_new"></a>New installation</h2></div></div></div><p>Please see <a class="link" href="apes02.html" title="Schema update">here</a> if you want to
+    upgrade an existing schema version.</p><p><span class="bold"><strong>Schema installation</strong></span></p><p>Please install the schema that comes with LAM Pro. The schema files
+    are located in:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>tar.bz2: docs/schema</p></li><li class="listitem"><p>DEB: /usr/share/doc/ldap-account-manager/docs/schema</p></li><li class="listitem"><p>RPM: /usr/share/doc/ldap-account-manager-{VERSION}/schema</p></li></ul></div><div class="literallayout"><p><br>
+</p></div><p><span class="bold"><strong>OpenLDAP with slapd.conf
+    configuration</strong></span></p><p>For a configuration with slapd.conf-file copy
+    passwordSelfReset.schema to /etc/ldap/schema/ and add this line to
+    slapd.conf:</p><div class="literallayout"><p>  include         /etc/ldap/schema/passwordSelfReset.schema<br>
+<br>
+</p></div><p><span class="bold"><strong>OpenLDAP with slapd.d
+    configuration</strong></span></p><p>For slapd.d configurations you need to upload the schema file
+    passwordSelfReset.ldif via ldapadd command:</p><p>ldapadd -x -W -H ldap://<span class="emphasis"><em>localhost</em></span> -D
+    "<span class="emphasis"><em>cn=admin,o=test,c=de</em></span>" -f
+    passwordSelfReset.ldif</p><p>Please replace "<span class="emphasis"><em>localhost</em></span>" with your LDAP
+    server and "<span class="emphasis"><em>cn=admin,o=test,c=de</em></span>" with your LDAP
+    admin user (usually starts with cn=admin or cn=manager).</p><p>In some cases you might need to import directly on the OpenLDAP
+    server as root:</p><p>ldapadd -Y EXTERNAL -H ldapi:/// -f passwordSelfReset.ldif</p><div class="literallayout"><p><br>
+</p></div><p><span class="bold"><strong>389 server</strong></span></p><p>Please replace INSTANCE with installation ID, e.g.
+    slapd-389ds.</p><div class="literallayout"><p>  cp passwordSelfReset-389server.ldif /etc/dirsrv/INSTANCE/schema/70pwdreset.ldif<br>
+  systemctl restart dirsrv.target<br>
+<br>
+</p></div><p><span class="bold"><strong>Samba 4</strong></span></p><p>The schema files are passwordSelfReset-Samba4-attributes.ldif and
+    passwordSelfReset-Samba4-objectClass.ldif.</p><p>First, you need to edit them and replace "DOMAIN_TOP_DN" with your
+    LDAP suffix (e.g. dc=samba4,dc=test).</p><p>Then install the attribute and afterwards the object class schema
+    file:</p><div class="literallayout"><p>  ldbmodify -H /var/lib/samba/private/sam.ldb passwordSelfReset-Samba4-attributes.ldif --option="dsdb:schema update allowed"=true<br>
+  ldbmodify -H /var/lib/samba/private/sam.ldb passwordSelfReset-Samba4-objectClass.ldif --option="dsdb:schema update allowed"=true<br>
+<br>
+</p></div><p><span class="bold"><strong>Windows</strong></span></p><p>The schema file is passwordSelfReset-Windows.ldif.</p><p>First, you need to edit it and replace "DOMAIN_TOP_DN" with your
+    LDAP suffix (e.g. dc=windows,dc=test).</p><p>Then install the schema file as administrator on a command
+    line:</p><div class="literallayout"><p>  ldifde -v -i -f passwordSelfReset-Windows.ldif<br>
+<br>
+</p></div><p>This allows to set a security question + answer for each
+    account.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apds06.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="apes02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Troubleshooting </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Schema update</td></tr></table></div></body></html>

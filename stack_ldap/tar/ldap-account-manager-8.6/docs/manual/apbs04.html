@@ -1,0 +1,31 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>SELinux</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"><link rel="home" href="index.html" title="LDAP Account Manager - Manual"><link rel="up" href="apb.html" title="Appendix B. Security"><link rel="prev" href="apbs03.html" title="LDAP with SSL and TLS"><link rel="next" href="apbs05.html" title="Chrooted servers"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">SELinux</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="apbs03.html">Prev</a> </td><th width="60%" align="center">Appendix B. Security</th><td width="20%" align="right"> <a accesskey="n" href="apbs05.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="selinux"></a>SELinux</h2></div></div></div><p>In case your server has SELinux installed you might need to extend
+    the SELinux ruleset. E.g. your webserver might not be allowed to write in
+    /var/lib.</p><p><span class="bold"><strong>Read SELinux status</strong></span></p><p>The following command will tell you if SELinux is running in
+    Enforcing or Permissive mode.</p><p>Enforcing: access that does not match rules is denied</p><p>Permissive: access that does not match rules is granted but logged
+    to audit.log</p><pre class="programlisting">getenforce</pre><p><span class="bold"><strong>Set SELinux to Permissive
+    mode</strong></span></p><p>This will just log any access violations. You will need this to get
+    a list of missing rights.</p><pre class="programlisting">setenforce Permissive</pre><p>Now do any actions inside LAM that you need for your daily work
+    (e.g. edit server profiles, manage LDAP entries, ...).</p><p><span class="bold"><strong>Extend SELinux rules</strong></span></p><p>SELinux now has logged any violations to audit.log. You can use this
+    now to extend your ruleset and enable enforcing later.</p><p>The following example is for httpd. You can also adapt it to e.g.
+    nginx.</p><pre class="programlisting"># build additional SELinux rules from audit.log
+grep httpd /var/log/audit/audit.log | audit2allow -m httpdlocal -o httpdlocal.te
+</pre><p>The httpdlocal.te might look like this:</p><pre class="programlisting">module httpdlocal 1.0;
+
+require {
+        type httpd_t;
+        type var_lib_t;
+        class file { setattr write };
+}
+
+#============= httpd_t ==============
+
+#!!!! WARNING 'httpd_t' is not allowed to write or create to var_lib_t.  Change the label to httpd_var_lib_t.
+#!!!! $ semanage fcontext -a -t httpd_var_lib_t /var/lib/ldap-account-manager/config/lam.conf
+#!!!! $ restorecon -R -v /var/lib/ldap-account-manager/config/lam.conf
+allow httpd_t var_lib_t:file { setattr write };
+</pre><p>Now we can compile and install this rule:</p><pre class="programlisting"># build module
+checkmodule -M -m -o httpdlocal.mod httpdlocal.te
+# package module
+semodule_package -o httpdlocal.pp -m httpdlocal.mod
+# install module
+semodule -i httpdlocal.pp</pre><p>Now you can switch back to Enforcing mode:</p><pre class="programlisting">setenforce Enforcing</pre><p>LAM should now work as expected with active SELinux.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs03.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">LDAP with SSL and TLS </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chrooted servers</td></tr></table></div></body></html>

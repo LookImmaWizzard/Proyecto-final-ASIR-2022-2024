@@ -1,0 +1,53 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Nginx configuration</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"><link rel="home" href="index.html" title="LDAP Account Manager - Manual"><link rel="up" href="apb.html" title="Appendix B. Security"><link rel="prev" href="apbs07.html" title="Apache configuration"><link rel="next" href="apbs09.html" title="WebAuthn/FIDO2"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Nginx configuration</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="apbs07.html">Prev</a> </td><th width="60%" align="center">Appendix B. Security</th><td width="20%" align="right"> <a accesskey="n" href="apbs09.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="nginx"></a>Nginx configuration</h2></div></div></div><p>There is no fully automatic setup of Nginx but LAM provides a
+    ready-to-use configuration file.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm6849"></a>Security headers</h3></div></div></div><p>LAM already sets several security headers by default. For
+      production machines it is recommended to run LAM with "https://"
+      enabled. In this case the HSTS header should be set.</p><p>This will enforce browsers to connect via "https://". Please note
+      that you need to make sure that your installation has a valid
+      certificate now and in the future.</p><p>The example configurations below already include a commented
+      example for "Strict-Transport-Security" (HSTS). You can activate it if
+      needed.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm6854"></a>RPM based installations</h3></div></div></div><p>The RPM package has dependencies on Apache. Therefore, Nginx is
+      not officially supported with this installation mode. Use tar.bz2 if you
+      are unsure.</p><p>However, the package also includes an Nginx configuration file.
+      Please include it in your server directive like this:</p><pre class="programlisting">server {
+        ...
+
+        include /etc/ldap-account-manager/lam.nginx.conf;
+
+        ...
+}</pre><p>The included config file uses "127.0.0.1:9000" for PHP. In case
+      you run PHP with a socket please update the parameter "fastcgi_pass" to
+      e.g. "/var/run/php8-fpm.sock".</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm6860"></a>DEB based installations</h3></div></div></div><p>The LAM installation package ships with an Nginx configuration
+      file. Please include it in your server directive like this:</p><pre class="programlisting">server {
+        ...
+
+        include /etc/ldap-account-manager/nginx.conf;
+
+        ...
+}</pre><p>The included config file uses PHP 8.2. In case you run with a different PHP version
+      please update the parameter "fastcgi_pass" to e.g.
+      "/var/run/php/php8.3-fpm.sock".</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm6865"></a>tar.bz2 based installations</h3></div></div></div><p>Please add the following configuration snippet to your server
+      directive.</p><p>You will need to change the alias location
+      ("/usr/share/ldap-account-manager") and fastcgi_pass (e.g.
+      "/var/run/php/php-fpm.sock" or "/var/run/php8-fpm.sock") to match your
+      installation.</p><pre class="programlisting">location /lam {
+  index index.html;
+  alias /usr/share/ldap-account-manager;
+  autoindex off;
+  # HSTS header to enforce https:// connections
+  # add_header Strict-Transport-Security "max-age=31536000";
+
+  location ~ \.php$ {
+    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+    fastcgi_pass unix:/var/run/php8-fpm.sock;
+    fastcgi_index index.php;
+    fastcgi_param SCRIPT_FILENAME $request_filename;
+    include fastcgi_params;
+  }
+
+  location ~ /lam/(tmp/internal|sess|config|lib|help|locale) {
+    deny all;
+    return 403;
+  }
+
+}
+</pre></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs07.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs09.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Apache configuration </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> WebAuthn/FIDO2</td></tr></table></div></body></html>

@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: proyecto_stackgrafana
+  name: proyecto_stackgrafana
+spec:
+  containers:
+  - name: prometheus
+    image: docker.io/prom/prometheus:latest
+    args:
+    - "--web.listen-address=127.0.0.1:9091"
+    - "--config.file=/etc/prometheus/prometheus.yml"
+    resources: {}
+    securityContext:
+      capabilities:
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+    volumeMounts:
+    - mountPath: /etc/prometheus:Z
+      name: srv-prometheus-etc-host-0
+    - mountPath: /prometheus:Z
+      name: srv-prometheus-data-host-0
+  - name: grafana
+    image: docker.io/grafana/grafana:latest
+    resources: {}
+    securityContext:
+      capabilities:
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+        - CAP_AUDIT_WRITE
+      privileged: false
+    volumeMounts:
+    - mountPath: /var/lib/grafana:Z
+      name: srv-grafana-data-host-0
+  - args:
+    - --path.rootfs=/host
+    image: docker.io/prom/node-exporter:latest
+    name: node_exporter
+    securityContext:
+      capabilities:
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+    volumeMounts:
+    - mountPath: /host
+      name: root-host-0
+      readOnly: true
+  restartPolicy: unless-stopped
+  volumes:
+  - hostPath:
+      path: /root/podman/proyecto/stack_grafana/volumes/prometheus/etc
+      type: Directory
+    name: srv-prometheus-etc-host-0
+  - hostPath:
+      path: /root/podman/proyecto/stack_grafana/volumes/prometheus/data
+      type: Directory
+    name: srv-prometheus-data-host-0
+  - hostPath:
+      path: /root/podman/proyecto/stack_grafana/volumes/grafana/data
+      type: Directory
+    name: srv-grafana-data-host-0
+  - hostPath:
+      path: /
+      type: Directory
+    name: root-host-0
+  enableServiceLinks: false
+  hostNetwork: true
+
