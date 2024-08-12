@@ -1,0 +1,39 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Password reset page</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"><link rel="home" href="index.html" title="LDAP Account Manager - Manual"><link rel="up" href="ch06.html" title="Chapter 6. Access levels and password reset page (LAM Pro)"><link rel="prev" href="ch06.html" title="Chapter 6. Access levels and password reset page (LAM Pro)"><link rel="next" href="ch07.html" title="Chapter 7. Self service (LAM Pro)"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Password reset page</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch06.html">Prev</a> </td><th width="60%" align="center">Chapter 6. Access levels and password reset page (LAM Pro)</th><td width="20%" align="right"> <a accesskey="n" href="ch07.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="s_pwdReset"></a>Password reset page</h2></div></div></div><p>This special page allows your deskside support staff to reset the
+      Unix and Samba passwords of your users. Account may also be (un)locked
+      If you set the <a class="link" href="ch06.html#s_accessLevel">access level</a> to
+      "Change passwords" then LAM will not allow any changes to the LDAP
+      database except password changes via this page. The account pages will
+      be still available in read-only mode.</p><p>You can open the password reset page by clicking on the key symbol
+      on each user account:</p><div class="screenshot"><div class="mediaobject"><img src="images/passwordReset1.png"></div></div><p>There are three different options to set a new password.
+      You can further restrict these options in server profile
+      settings.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><span class="bold"><strong>set random password and display it on
+          screen</strong></span></p><p>This will set the user's password to a random value. The
+          password will be 11 characters long with a random combination of
+          letters, digits and ".-_".</p><p>You may want to use this method to tell users their new
+          passwords via phone.</p></li><li class="listitem"><p><span class="bold"><strong>set random password and mail it to
+          user</strong></span></p><p>If the user account has set the mail attribute then LAM can
+          send your user a mail with the new password. You can change the mail
+          template to fit your needs. Please configure your LAM server profile
+          to setup the sender address, subject and mail body. See <a class="link" href="ch03.html#mailSetup" title="Mail options (LAM Pro)">here</a> for setting up your
+          SMTP server.</p><p>Using this method will prevent that your support staff knows
+          the new password.</p></li><li class="listitem"><p><span class="bold"><strong>set specific password</strong></span></p><p>Here you can specify your own password.</p></li></ul></div><div class="screenshot"><div class="mediaobject"><img src="images/passwordReset2.png"></div></div><p>LAM will display contact information about the user like the
+      user's name, email address and telephone number. This will help your
+      deskside support to easily contact your users.</p><p><span class="bold"><strong>Options:</strong></span></p><p>Depending on the account there may be additional options
+      available.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><span class="bold"><strong>Sync Samba NT/LM password with Unix
+          password:</strong></span> If a user account has Samba passwords set then
+          LAM will offer to synchronize the passwords.</p></li><li class="listitem"><p><span class="bold"><strong>Unlock Samba account:</strong></span> Locked
+          Samba accounts can be unlocked with the password change.</p></li><li class="listitem"><p><span class="bold"><strong>Update Samba password
+          timestamps:</strong></span> This will set the timestamps when the
+          password was changed (sambaPwdLastSet). Only existing attributes are
+          updated. No new attributes are added.</p></li><li class="listitem"><p><span class="bold"><strong>Sync Kerberos password with Unix
+          password:</strong></span> This will also update the Heimdal Kerberos
+          password.</p></li><li class="listitem"><p><span class="bold"><strong>Sync Asterisk (voicemail) password with
+          Unix password:</strong></span> Changes also the Asterisk
+          passwords.</p></li><li class="listitem"><p><span class="bold"><strong>Force password change:</strong></span> This
+          will force the user to change his password at next login. This
+          option supports Shadow, Samba 3 and PPolicy (automatically
+          detected).</p></li></ul></div><div class="literallayout"><p><br>
+</p></div><p><span class="bold"><strong>Account (un)locking:</strong></span></p><p>Depending if the account includes a Unix/Samba extension and
+      PPolicy is activated the page will show options to (un)lock the account.
+      E.g. if the account is fully unlocked then there will be no unlocking
+      options printed.</p><div class="screenshot"><div class="mediaobject"><img src="images/passwordReset3.png"></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch06.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 6. Access levels and password reset page (LAM Pro) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 7. Self service (LAM Pro)</td></tr></table></div></body></html>

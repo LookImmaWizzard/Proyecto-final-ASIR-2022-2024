@@ -1,0 +1,45 @@
+#ESTE ARCHIVO YAML NO ES VALIDO PARA DESPLEGAR NINGUN POD, Y SE INCLUYE SOLO COMO DOCUMENTACION ADICIONAL DEL PROYECTO.
+#LAS VARIABLES DE ENTORNO DE LOS CONTENEDORES HAN SIDO SUSTITUIDAS POR VARIABLES DE BASH, Y DEBERIAN SER MODIFICADAS CON LOS VALORES DESEADOS POR EL USUARIO. 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: proyecto_stacknc #NOMBRE DEL POD
+spec:
+  volumes: #DECLARACION DE VOLUMENES
+  - name: nextcloud-data #NOMBRE DEL VOLUMEN
+    hostPath:
+      path: /root/podman/proyecto/stack_nextcloud/volumes/nextcloud_data #RUTA DEL HOST QUE ALOJA EL VOLUMEN
+  - name: postgres-data #NOMBRE DEL VOLUMEN
+    hostPath:
+      path: /root/podman/proyecto/stack_nextcloud/volumes/postgres_data
+  - name: pgadmin-data
+    hostPath:
+      path: /root/podman/proyecto/stack_nextcloud/volumes/pgadmin_data
+  containers: #CONTENEDORES
+  - name: nextcloud #NOMBRE DEL CONTENEDOR
+    image: docker.io/library/nextcloud:stable-apache #IMAGEN A USAR POR EL CONTENEDOR
+    volumeMounts:
+    - mountPath: /var/www/html:z #PUNTO DE MONTAJE INTERNO EN EL CONTENEDOR
+      name: nextcloud-data #NOMBRE DEL VOLUMEN DECLARADO PREVIAMENTE
+  - name: postgres #NOMBRE DEL CONTENEDOR
+    image: postgres:latest #IMAGEN A USAR POR EL CONTENEDOR
+    env: #VARIABLES DE ENTORNO
+    - name: POSTGRES_PASSWORD #NOMBRE DE LA VARIABLE
+      value: $POSTGRES_PASSWORD #VALOR DE LA VARIABLE
+    - name: POSTGRES_USER
+      value: $POSTGRES_USER
+    volumeMounts:
+    - mountPath: /var/lib/postgresql/data:z #PUNTO DE MONTAJE INTERNO DEL CONTENEDOR
+      name: postgres-data #NOMBRE DEL VOLUMEN DECLARADO PREVIAMENTE
+  - name: pgadmin #NOMBRE DEL CONTENEDOR
+    image: dpage/pgadmin4 #IMAGEN A USAR POR EL CONTENEDOR
+    env: #VARIABLES DE ENTORNO
+    - name: PGADMIN_DEFAULT_EMAIL #NOMBRE DE LA VARIABLE
+      value: $PGADMIN_DEFAULT_EMAIL #VALOR DE LA VARIABLE
+    - name: PGADMIN_DEFAULT_PASSWORD
+      value: $PGADMIN_DEFAULT_PASSWORD
+    - name: PGADMIN_LISTEN_PORT
+      value: "81"
+    volumeMounts:
+    - mountPath: /var/lib/pgadmin:z #PUNTO DE MONTAJE INTERNO DEL VOLUMEN EN EL CONTENEDOR
+      name: pgadmin-data #NOMBRE DEL VOLUMEN DECLARADO PREVIAMENTE

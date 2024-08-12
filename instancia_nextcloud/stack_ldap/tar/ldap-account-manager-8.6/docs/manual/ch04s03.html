@@ -1,0 +1,101 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Groups</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"><link rel="home" href="index.html" title="LDAP Account Manager - Manual"><link rel="up" href="ch04.html" title="Chapter 4. Managing entries in your LDAP directory"><link rel="prev" href="ch04s02.html" title="Users"><link rel="next" href="ch04s04.html" title="Hosts"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Groups</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch04s02.html">Prev</a> </td><th width="60%" align="center">Chapter 4. Managing entries in your LDAP directory</th><td width="20%" align="right"> <a accesskey="n" href="ch04s04.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="idm2895"></a>Groups</h2></div></div></div><p></p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2898"></a>Unix</h3></div></div></div><p>This module is used to manage Unix group entries. This is the
+      default module to manage Unix groups and uses the nis.schema. Suse users
+      who use the <a class="link" href="ch04s03.html#rfc2307bisPosixGroup" title="Unix groups with rfc2307bis schema (LAM Pro)">rfc2307bis.schema</a> need to use LAM
+      Pro.</p><p><span class="bold"><strong>Configuration</strong></span></p><p>Special Please add the account type "Groups" and then select
+      account module "Unix (posixGroup)".</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_unixGroupConfig1.png"></div></div><p>Virtual list attributes:</p><div class="screenshot"><div><img src="images/mod_unixGroupConfig2.png"></div></div><p>The following virtual attributes can be shown in the group list.
+      These are no real LDAP attributes but extra data that can be shown by
+      LAM.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>memberuid_count: number of entries in attribute
+          "memberuid"</p></li><li class="listitem"><p>member_count: number of entries in attribute "member"</p></li><li class="listitem"><p>uniqueMember_count: number of entries in attribute
+          "uniquemember"</p></li><li class="listitem"><p>owner_count: number of entries in attribute "owner"</p></li><li class="listitem"><p>roleOccupant_count: number of entries in attribute
+          "roleOccupant"</p></li></ul></div><p>Module settings:</p><p>GID generator: LAM will suggest GID numbers for your accounts.
+      Please note that it may happen that there are duplicate IDs assigned if
+      users create groups at the same time. Use an <a class="ulink" href="http://www.openldap.org/doc/admin24/overlays.html" target="_top">overlay</a>
+      like "Attribute Uniqueness" (<a class="link" href="apc.html#a_openldap_unique">example</a>) if you have lots of LAM
+      admins creating groups.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Fixed range: LAM searches for free numbers within the given
+          limits. LAM always tries to use a free GID that is greater than the
+          existing GIDs to prevent collisions with deleted groups.</p></li><li class="listitem"><p>Samba ID pool: This uses a special LDAP entry that includes
+          attributes that store a counter for the last used UID/GID. Please
+          note that this requires that you install the Samba schema and create
+          an LDAP entry of object class "sambaUnixIdPool".</p></li><li class="listitem"><p>Magic number: Use this if your LDAP server assigns the GID
+          numbers automatically (e.g. DNA by 389 server). Enter the server's
+          magic number setting.</p></li></ul></div><p>Disable membership management: Disables group membership
+      management. This is useful if memberships are e.g. managed via group of
+      names.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_unixGroupConfig.png"></div></div><p>Group management:</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_unixGroup.png"></div></div><p>Group membership management:</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_unixGroup2.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="rfc2307bisPosixGroup"></a>Unix groups with rfc2307bis schema (LAM Pro)</h3></div></div></div><p>Some applications (e.g. Suse Linux) use the rfc2307bis schema for
+      Unix accounts instead of the nis schema. In this case group accounts are
+      based on the object class <a lang="" class="link" href="ch04s06.html" title="Group of (unique) names and group of members (LAM Pro)">groupOf(Unique)Names</a> or namedObject. The
+      object class posixGroup is auxiliary in this case.</p><p>LAM Pro supports these groups with a special account module:
+      <span class="bold"><strong>rfc2307bisPosixGroup</strong></span></p><p>Use this module only if your system depends on the rfc2307bis
+      schema. The module can be selected in the LAM configuration. Instead of
+      using groupOfNames as basis for your groups you may also use
+      namedObject.</p><p>Module activation:</p><div class="screenshot"><div class="mediaobject"><img src="images/rfc2307bis.png"></div></div><p>GID generator: LAM will suggest GID numbers for your accounts.
+      Please note that it may happen that there are duplicate IDs assigned if
+      users create groups at the same time. Use an <a class="ulink" href="http://www.openldap.org/doc/admin24/overlays.html" target="_top">overlay</a>
+      like "Attribute Uniqueness" (<a class="link" href="apc.html#a_openldap_unique">example</a>) if you have lots of LAM
+      admins creating groups.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Fixed range: LAM searches for free numbers within the given
+          limits. LAM always tries to use a free GID that is greater than the
+          existing GIDs to prevent collisions with deleted groups.</p></li><li class="listitem"><p>Samba ID pool: This uses a special LDAP entry that includes
+          attributes that store a counter for the last used UID/GID. Please
+          note that this requires that you install the Samba schema and create
+          an LDAP entry of object class "sambaUnixIdPool".</p></li><li class="listitem"><p>Magic number: Use this if your LDAP server assigns the GID
+          numbers automatically (e.g. DNA by 389 server). Enter the server's
+          magic number setting.</p></li></ul></div><p>Disable membership management: Disables group membership
+      management. This is useful if memberships are e.g. managed via group of
+      names.</p><p>Force sync with group of names: This will automatically set the
+      group memberships of the Unix part to the same members as set on group
+      of names tab.</p><div class="screenshot"><div class="mediaobject"><img src="images/rfc2307bis2.png"></div></div><p>The GID number will be filled automatically based on the server
+      profile configuration.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_unixGroupLAMPro.png"></div></div><p>Group members can be edited and also synced with Group of (unique)
+      names.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_unixGroupLAMPro2.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2989"></a>Samba 3</h3></div></div></div><p>LAM supports managing Samba 3 groups. You can set special group
+      types and also create Windows predefined groups like "Domain
+      admins".</p><p>Module activation:</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_sambaGroup2.png"></div></div><p>Group editing:</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_sambaGroup.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm3002"></a>Windows (Samba 4)</h3></div></div></div><p>LAM can manage your Windows groups. Please enable the account type
+      "Groups" in your LAM server profile and then add the group module
+      "Windows (windowsGroup)(*)".</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_windowsGroup3.png"></div></div><p>The default list attributes are for Unix and not suitable for
+      Windows (blank lines in account table). Please use
+      "#cn;#member;#description" or select your own attributes to display in
+      the account list.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_windowsGroup1.png"></div></div><p>NIS support is deactivated by default. Enable it if needed on tab
+      "Module settings".</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_windowsGroup4.png"></div></div><p>Now you can edit your groups inside LAM. You can manage the group
+      name, description and its type. Of course, you can also set the group
+      members.</p><p>Group scopes:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Global: Use this for groups with frequent changes. Global
+          groups are not replicated to other domains.</p></li><li class="listitem"><p>Universal: Groups with universal scope are used to consolidate
+          groups that span domains. They are globally replicated.</p></li><li class="listitem"><p>Domain local: Groups with domain local scope can be used to
+          set permissions inside one domain. They are not replicated to other
+          domains.</p></li></ul></div><p>Group type:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Security: Use this group type to control permissions.</p></li><li class="listitem"><p>Distribution: These groups are only used for email
+          applications. They cannot be used to control permissions.</p></li></ul></div><p>With "Show effective members" you can show a list of all members
+      of this group including members of subgroups and their subgroups.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_windowsGroup2.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm3039"></a>AD LDS (formerly ADAM) (LAM Pro)</h3></div></div></div><p>LAM can manage your AD LDS groups. Please enable the account type
+      "Groups" in your LAM server profile and then add the group module "AD
+      LDS (windowsLDSGroup)(*)".</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_windowsGroup3.png"></div></div><p>The default list attributes are for Unix and not suitable for AD
+      LDS (blank lines in account table). Please use
+      "#cn;#member;#description" or select your own attributes to display in
+      the account list.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_adLds2.png"></div></div><p></p><p>Now you can edit your groups inside LAM. You can manage the group
+      name, description and its type. Of course, you can also set the group
+      members.</p><p>With "Show effective members" you can show a list of all members
+      of this group including members of subgroups and their subgroups.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_adLds6.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm3058"></a>Kolab</h3></div></div></div><p>Please activate the Kolab group module in your LAM server profile
+      to activate Kolab support.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_kolab3.png"></div></div><p>You can specify the email address and also set allowed sender and
+      recipient addresses.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_kolab4.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm3070"></a>Mail routing</h3></div></div></div><p>LAM supports to manage mail routing for group accounts.</p><p>Module activation:</p><p>This feature can be activated by adding the "Mail routing" module
+      to the group account type in your server profile.</p><div class="screenshot"><div class="mediaobject"><img src="images/mailRoutingConfigGroup.png"></div></div><p>Usage:</p><p>You can specify a routing address, the mail server and a number of
+      local addresses to route.</p><p>In case you want to add this extension by default for new groups
+      there is an option in profile editor.</p><div class="screenshot"><div class="mediaobject"><img src="images/mailRoutingGroup.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm3086"></a>Quota</h3></div></div></div><p>You can manage file system quotas with LAM. This requires to setup
+      <a class="link" href="apd.html" title="Appendix D. Setup for home directory and quota management">lamdaemon</a>. File system quotas are not
+      stored inside LAM but managed directly on the specified servers.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_quotaGroup.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm3094"></a>Dynamic lists (LAM Pro)</h3></div></div></div><p><a class="ulink" href="http://www.openldap.org/doc/admin24/overlays.html#Dynamic%20Lists" target="_top">Dynamic
+      lists</a> allow you to create LDAP entries that populate the value
+      of an attribute via LDAP query. This is e.g. used to create groups that
+      contain all users in a certain DN.</p><p>Please note that this functionality requires configuration on your
+      LDAP server. E.g. on OpenLDAP you need to activate the "dynlist" overlay
+      and need to specify attribute mappings.</p><p><span class="bold"><strong>Configuration</strong></span></p><p>Add a new group account type and set a unique label for it.</p><p><span class="inlinemediaobject"><img src="images/mod_dynamicList1.png"></span></p><p>Do not forget to set proper "List attributes" to be shown on the
+      overview page of all dynamic lists.</p><p><span class="inlinemediaobject"><img src="images/mod_dynamicList2.png"></span></p><p>On tab "Modules" please add the dynamic lists module.</p><p><span class="inlinemediaobject"><img src="images/mod_dynamicList4.png"></span></p><p>On tab "Module settings" you can now configure your dynamic lists.
+      Here you setup the used object class, RDN attribute, query attribute and
+      list attribute (the one that is populated via query).</p><p>In case you have different types of dynamic lists you can simply
+      redo the steps above to create more group types.</p><p><span class="inlinemediaobject"><img src="images/mod_dynamicList3.png"></span></p><p></p><p><span class="bold"><strong>Usage</strong></span></p><p>When you login to LAM you will see your new dynamic lists
+      tab.</p><p><span class="inlinemediaobject"><img src="images/mod_dynamicList5.png"></span></p><p>For each list you can manage the name and query string. LAM also
+      displays which entries are auto-populated to the list.</p><p><span class="inlinemediaobject"><img src="images/mod_dynamicList6.png"></span></p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm3135"></a>PyKota</h3></div></div></div><p>There are two LAM group modules depending if your group entries
+      should be built on object class "pykotaObject" or a different structural
+      object class (e.g. "posixGroup"). For "pykotaObject" please select
+      "PyKota (pykotaGroupStructural(*))" and "PyKota (pykotaGroup)" in all
+      other cases.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_pykotaGroup1.png"></div></div><p>Now you can add the PyKota extension to your groups.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_pykotaGroup2.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm3147"></a>Hosts</h3></div></div></div><p>You can specify a list of valid host names where the group's
+      members may login. If you add the value "*" then the users may login to
+      any host. This can be further restricted by adding explicit deny entries
+      which are prefixed with "!" (e.g. "!hr_server").</p><p>Please note that your PAM settings need to support host
+      restrictions. This feature is enabled by setting <span class="bold"><strong>pam_check_host_attr yes</strong></span> in your <span class="bold"><strong>/etc/pam_ldap.conf</strong></span>. When it is enabled then the
+      account facility of pam_ldap will perform the checks and return an error
+      when no proper host attribute is present. Please note that users without
+      host attribute cannot login to such a configured server.</p><div class="screenshot"><div class="mediaobject"><img src="images/hostObjectGroup.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm3157"></a>Password policy (LAM Pro)</h3></div></div></div><p>See <a class="link" href="ch04s02.html#mod_passwordPolicy" title="Password policy (LAM Pro)">password policy for
+      users</a>.</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch04s02.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch04.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch04s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Users </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Hosts</td></tr></table></div></body></html>

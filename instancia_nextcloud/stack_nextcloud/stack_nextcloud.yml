@@ -1,0 +1,49 @@
+#ESTE MANIFIESTO YAML SOLO ES UN EJEMPLO ILUSTRATIVO DE UN YAML DE KUBERNETES VALIDO Y NO ESTA PENSADO PARA DESPLEGAR LA INSTANCIA USANDO podman kube play.
+#LOS VALORES DE USUARIO ESTAN SUSTUIDOS POR VARIABLES
+
+#CABECERA
+apiVersion: v1
+kind: Pod
+metadata:
+  name: proyecto_stacknc #Nombre del pod
+spec:
+  volumes: #DECLARACION DE VOLUMENES
+  - name: nextcloud-data #Nombre del volumen declarado
+    hostPath:
+      path: /root/podman/proyecto/stack_nextcloud/volumes/nextcloud_data #Ruta al volumen declarado
+  - name: postgres-data
+    hostPath:
+      path: /root/podman/proyecto/stack_nextcloud/volumes/postgres_data
+  - name: pgadmin-data
+    hostPath:
+      path: /root/podman/proyecto/stack_nextcloud/volumes/pgadmin_data
+#CONTENEDORES  
+containers:
+  - name: nextcloud #Nombre del contenedor
+    image: docker.io/library/nextcloud:stable-apache #Imagen usada para el despliegue del contenedor. Compatible con cualquier Imagen OCI
+    volumeMounts:
+    - mountPath: /var/www/html:z #Punto de montaje interno en el contnedor, del volumen referneciado
+      name: nextcloud-data #Nombre del contenedor a usar (Debe estar declarado en la seccion volumes)
+  - name: postgres
+    image: postgres:latest
+#VARIABLES DE ENTORNO
+    env:
+    - name: POSTGRES_PASSWORD #Clave
+      value: $POSTGRES_PASSWORD #Valor
+    - name: POSTGRES_USER
+      value: $POSTGRES_USER
+    volumeMounts:
+    - mountPath: /var/lib/postgresql/data:z
+      name: postgres-data
+  - name: pgadmin
+    image: dpage/pgadmin4
+    env:
+    - name: PGADMIN_DEFAULT_EMAIL
+      value: $PGADMIN_DEFAULT_EMAIL
+    - name: PGADMIN_DEFAULT_PASSWORD
+      value: $PGADMIN_DEFAULT_PASSWORD
+    - name: PGADMIN_LISTEN_PORT
+      value: "81"
+    volumeMounts:
+    - mountPath: /var/lib/pgadmin:z
+      name: pgadmin-data

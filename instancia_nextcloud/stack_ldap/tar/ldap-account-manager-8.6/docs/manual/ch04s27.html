@@ -1,0 +1,73 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Custom scripts (LAM Pro)</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"><link rel="home" href="index.html" title="LDAP Account Manager - Manual"><link rel="up" href="ch04.html" title="Chapter 4. Managing entries in your LDAP directory"><link rel="prev" href="ch04s26.html" title="Custom fields (LAM Pro)"><link rel="next" href="ch04s28.html" title="Sudo roles (LAM Pro)"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Custom scripts (LAM Pro)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch04s26.html">Prev</a> </td><th width="60%" align="center">Chapter 4. Managing entries in your LDAP directory</th><td width="20%" align="right"> <a accesskey="n" href="ch04s28.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="idm4538"></a>Custom scripts (LAM Pro)</h2></div></div></div><p>LAM Pro allows you to execute scripts whenever an account is
+    created, modified or deleted. This can be useful to automate processes
+    which needed manual work afterwards (e.g. sending your user a welcome mail
+    or register a mailbox). Additionally, you can specify manual scripts that
+    can be executed from within LAM Pro.</p><p>To activate this feature please add the "Custom scripts" module to
+    all needed account types on the configuration pages.</p><div class="screenshot"><div class="mediaobject"><img src="images/customScripts3.png"></div></div><p>In "Module settings" you can specify multiple scripts for each
+    action type (e.g. modify) and account type (e.g. user). The scripts need
+    to be located on the filesystem of your webserver and will be executed in
+    its user environment. E.g. if you webserver runs as user www-data with the
+    group www-data then the custom scripts will be run under this user with
+    his rights. The output of the scripts will be shown in LAM.</p><p>You can specify the scripts on the LAM configuration pages.</p><div class="screenshot"><div class="mediaobject"><img src="images/customScripts.png"></div></div><p><span class="bold"><strong>Syntax:</strong></span></p><p>Please enter one script per line. Each line has the following
+    format: &lt;account type&gt; &lt;action&gt; &lt;script&gt;</p><p>E.g.: user preModify /usr/bin/myCustomScript -u $uid$</p><p><span class="bold"><strong>Account types:</strong></span></p><p>You can setup scripts for all available account types (e.g. user,
+    group, host, ...). Please see the help on the configuration page about
+    your current active account types.</p><p><span class="bold"><strong>Actions:</strong></span></p><div class="table"><a name="idm4561"></a><p class="title"><b>Table 4.4. Action types</b></p><div class="table-contents"><table class="table" summary="Action types" border="1"><colgroup><col><col></colgroup><tbody><tr><td><span class="bold"><strong>Action name</strong></span></td><td><span class="bold"><strong>Description</strong></span></td></tr><tr><td>preCreate</td><td>Executed before creating a new account (cancels operation
+            if a script returns an exit code &gt; 0, not available for file
+            upload)</td></tr><tr><td>postCreate</td><td>Executed after creating a new account (does <span class="bold"><strong>not</strong></span> run if preCreate or LDAP operations
+            fail)</td></tr><tr><td>preModify</td><td>Executed before an account is modified (cancels operation
+            if a script returns an exit code &gt; 0)</td></tr><tr><td>postModify</td><td>Executed after an account was modified (does <span class="bold"><strong>not</strong></span> run if preModify or LDAP operations
+            fail)</td></tr><tr><td>preDelete</td><td>Executed before an account is modified (cancels operation
+            if a script returns an exit code &gt; 0)</td></tr><tr><td>postDelete</td><td>Executed after an account was modified (does <span class="bold"><strong>not</strong></span> run if preDelete or LDAP operations
+            fail)</td></tr><tr><td>manual</td><td>Can be run manually on account page. If you add
+            LAMLABEL="text" before the command then LAM will use the text as
+            label for the button in account edit screen.</td></tr></tbody></table></div></div><br class="table-break"><p><span class="bold"><strong>Script:</strong></span></p><p>You can execute any script which is located on the filesystem of
+    your webserver. The path may be absolute or relative to the PATH-variable
+    of the environment of your webserver process. It is also possible to add
+    commandline arguments to your scripts. Additionally, LAM will resolve
+    wildcards to LDAP attributes. If your script includes an wildcard in the
+    format $ATTRIBUTE$ then LAM will replace it with the attribute value of
+    the current LDAP entry. The values of multi-value attributes are separated
+    by commas. E.g. if you create an account with the attribute "uid" and
+    value "steve" then LAM will resolve "$uid$" to "steve".</p><p>Please note that manual scripts can only use the current LDAP
+    attribute values of the account. Any modifications done that are not saved
+    will not be available. Manual scripts are also not available for new
+    accounts that are not yet saved to LDAP.</p><p>You can switch LAM's logging to debug mode if you are unsure which
+    attributes with which values are available.</p><p>The following special wildcards are available for automatic
+    scripts:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><span class="bold"><strong>$INFO.lamLoginDn$:</strong></span> the DN of
+        the user that is logged in to LAM.</p></li><li class="listitem"><p><span class="bold"><strong>$INFO.debug$:</strong></span> list of all
+        possible wildcards and their values (e.g.
+        "$objectClass$:posixAccount,inetOrgPerson; $loginShell$:/bin/bash;
+        $gidNumber$:12345; $uid$:userid...")</p></li><li class="listitem"><p><span class="bold"><strong>$INFO.userPasswordClearText$:</strong></span>
+        cleartext password when Unix/Windows password is changed (e.g. useful
+        for external password synchronisation) for new/modified
+        accounts</p></li><li class="listitem"><p><span class="bold"><strong>$INFO.userPasswordStatusChange$:</strong></span> provides
+        additional information if the Personal/Unix password locking status
+        was changed, possible values: locked, unlocked, unchanged</p></li><li class="listitem"><p><span class="bold"><strong>$INFO.passwordSelfResetAnswerClearText$</strong></span>:
+        cleartext answer to security question</p></li><li class="listitem"><p><span class="bold"><strong>$INFO.389lockingStatusChange$:</strong></span>
+        for 389ds account locking, provides information if account was
+        unlocked. Possible values: unchanged, unlocked</p></li><li class="listitem"><p><span class="bold"><strong>$INFO.389deactivationStatusChange$:</strong></span> for 389ds
+        account locking, provides information if account was deactivated.
+        Possible values: unchanged, activated, deactivated</p></li><li class="listitem"><p><span class="bold"><strong>$INFO.isNewAccount$:</strong></span> specifies
+        if the account already exists or is newly created (yes|no)</p></li><li class="listitem"><p><span class="bold"><strong>$INFO.passwordUpdated$:</strong></span>
+        specifies if the user password was changed (yes|no)</p></li><li class="listitem"><p><span class="bold"><strong>$INFO.passwordChangeType$:</strong></span>
+        password type (manual|random|none) where "none" means no password
+        change</p></li><li class="listitem"><p><span class="bold"><strong>$INFO.passwordChangeModules$:</strong></span>
+        module names of password change operation (e.g. "posixAccount")</p></li><li class="listitem"><p><span class="bold"><strong>$INFO.forcePasswordChange$:</strong></span> a
+        password change was forced (yes|no)</p></li><li class="listitem"><p><span class="bold"><strong>$INFO.sendPasswordViaEmail$:</strong></span>
+        send password via email (yes|no)</p></li><li class="listitem"><p><span class="bold"><strong>$INFO.sendPasswordAlternateAddress$:</strong></span> alternate
+        email address for password email if set (e.g.
+        "test@example.com")</p></li><li class="listitem"><p><span class="bold"><strong>$NEW.&lt;attribute&gt;$:</strong></span> the
+        value of a new attribute (e.g. $NEW.telephoneNumber$) for modified
+        accounts</p></li><li class="listitem"><p><span class="bold"><strong>$DEL.&lt;attribute&gt;$:</strong></span> the
+        value of a deleted attribute (e.g. $DEL.telephoneNumber$) for modified
+        accounts</p></li><li class="listitem"><p><span class="bold"><strong>$MOD.&lt;attribute&gt;$:</strong></span> the
+        new value of a modified attribute (e.g. $MOD.telephoneNumber$) for
+        modified accounts</p></li><li class="listitem"><p><span class="bold"><strong>$ORIG.&lt;attribute&gt;$:</strong></span> the
+        original value of an attribute (e.g. $ORIG.telephoneNumber$) for
+        modified accounts</p></li></ul></div><p><span class="bold"><strong>Output may contain HTML:</strong></span> If your
+    scripts generate HTML output then activate this option.</p><p><span class="bold"><strong>Hide command in messages:</strong></span> You may
+    want to prevent that your users see the executed commands. In this case
+    activating this option will only show the command output but not the
+    command itself.</p><p></p><p>You can see a preview of the commands which will be automatically
+    executed on the "Custom scripts" tab. Here you can also run the manual
+    scripts.</p><div class="screenshot"><div class="mediaobject"><img src="images/customScripts2.png"></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch04s26.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch04.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch04s28.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Custom fields (LAM Pro) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Sudo roles (LAM Pro)</td></tr></table></div></body></html>

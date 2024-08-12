@@ -1,0 +1,603 @@
+<?php
+namespace LAM\TOOLS\MULTI_EDIT;
+use htmlProgressbar;
+use \htmlTable;
+use \htmlTitle;
+use \htmlSelect;
+use \htmlOutputText;
+use \htmlInputField;
+use \htmlSubTitle;
+use \htmlButton;
+use \htmlStatusMessage;
+use \htmlSpacer;
+use \htmlHiddenInput;
+use \htmlGroup;
+use \htmlDiv;
+use \htmlJavaScript;
+use \htmlLink;
+use \htmlInputTextarea;
+use \htmlResponsiveRow;
+use \htmlResponsiveSelect;
+use \htmlResponsiveInputField;
+use \htmlResponsiveTable;
+use LAM\TOOLS\TREEVIEW\TreeViewTool;
+use LamTemporaryFilesManager;
+
+/*
+
+  This code is part of LDAP Account Manager (http://www.ldap-account-manager.org/)
+  Copyright (C) 2013 - 2023  Roland Gruber
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+*/
+
+/**
+* Multi edit tool that allows LDAP operations on multiple entries.
+*
+* @author Roland Gruber
+* @package tools
+*/
+
+/** security functions */
+include_once(__DIR__ . "/../../lib/security.inc");
+/** access to configuration data */
+include_once(__DIR__ . "/../../lib/config.inc");
+/** access LDAP server */
+include_once(__DIR__ . "/../../lib/ldap.inc");
+/** used to print status messages */
+include_once(__DIR__ . "/../../lib/status.inc");
+/** multi edit functions */
+include_once(__DIR__ . "/../../lib/multiEditTool.inc");
+
+// start session
+startSecureSession();
+enforceUserIsLoggedIn();
+
+// die if no write access
+if (!checkIfWriteAccessIsAllowed()) {
+	die();
+}
+
+checkIfToolIsActive('toolMultiEdit');
+
+setlanguage();
+
+if (!empty($_POST)) {
+	validateSecurityToken();
+}
+
+define('ADD', 'add');
+define('MOD', 'mod');
+define('DEL', 'del');
+
+define('STAGE_START', 'start');
+define('STAGE_READ_FINISHED', 'readFinished');
+define('STAGE_ACTIONS_CALCULATED', 'actionsCalculated');
+define('STAGE_WRITING', 'writing');
+define('STAGE_FINISHED', 'finished');
+
+if (isset($_GET['ajaxStatus'])) {
+	runAjaxActions();
+}
+else {
+	displayStartPage();
+}
+
+/**
+ * Displays the main page of the multi edit tool.
+ */
+function displayStartPage(): void {
+	// display main page
+	include __DIR__ . '/../../lib/adminHeader.inc';
+	echo '<div class="smallPaddingContent">';
+	echo "<form action=\"multiEdit.php\" method=\"post\">\n";
+	$errors = [];
+	$container = new htmlResponsiveRow();
+	$container->add(new htmlTitle(_("Multi edit")), 12);
+	// LDAP suffix
+	$showRules = ['-' => ['otherSuffix']];
+	$hideRules = [];
+	$typeManager = new \LAM\TYPES\TypeManager();
+	$types = $typeManager->getConfiguredTypes();
+	$suffixes = [];
+	foreach ($types as $type) {
+		if ($type->isHidden()) {
+			continue;
+		}
+		$suffixes[$type->getAlias()] = $type->getSuffix();
+		$hideRules[$type->getSuffix()] = ['otherSuffix'];
+	}
+	$treeSuffixes = TreeViewTool::getRootDns();
+	if (!empty($treeSuffixes)) {
+		if (sizeof($treeSuffixes) === 1) {
+			$suffixes[_('Tree view')] = $treeSuffixes[0];
+			$hideRules[$treeSuffixes[0]] = ['otherSuffix'];
+		}
+		else {
+			foreach ($treeSuffixes as $treeSuffix) {
+				$suffixes[_('Tree view') . ' (' . getAbstractDN($treeSuffix) . ')'] = $treeSuffix;
+				$hideRules[$treeSuffix] = ['otherSuffix'];
+			}
+		}
+	}
+	$suffixes = array_flip($suffixes);
+	natcasesort($suffixes);
+	$suffixes = array_flip($suffixes);
+	$suffixes[_('Other')] = '-';
+	$suffixValues = array_values($suffixes);
+	$valSuffix = empty($_POST['suffix']) ? $suffixValues[0] : $_POST['suffix'];
+	$suffixSelect = new htmlResponsiveSelect('suffix', $suffixes, [$valSuffix], _('LDAP suffix'), '700');
+	$suffixSelect->setHasDescriptiveElements(true);
+	$suffixSelect->setSortElements(false);
+	$suffixSelect->setTableRowsToShow($showRules);
+	$suffixSelect->setTableRowsToHide($hideRules);
+	$container->add($suffixSelect, 12);
+	$valOtherSuffix = empty($_POST['otherSuffix']) ? '' : $_POST['otherSuffix'];
+	$container->add(new htmlResponsiveInputField(_('Other'), 'otherSuffix', $valOtherSuffix), 12);
+	// LDAP filter
+	$valFilter = empty($_POST['filter']) ? '(objectClass=inetOrgPerson)' : $_POST['filter'];
+	$container->add(new htmlResponsiveInputField(_('LDAP filter'), 'filter', $valFilter, '701'), 12);
+	// operation fields
+	$operationsTitle = new htmlSubTitle(_('Operations'));
+	$operationsTitle->setHelpId('702');
+	$container->add($operationsTitle, 12);
+	$operationsTitles = [_('Type'), _('Attribute name'), _('Value')];
+	$data = [];
+	$opCount = empty($_POST['opcount']) ? '3' : $_POST['opcount'];
+	if (isset($_POST['addFields'])) {
+		$opCount += 3;
+	}
+	$operations = [_('Add') => ADD, _('Modify') => MOD, _('Delete') => DEL];
+	for ($i = 0; $i < $opCount; $i++) {
+		// operation type
+		$selOp = empty($_POST['op_' . $i]) ? ADD : $_POST['op_' . $i];
+		$opSelect = new htmlSelect('op_' . $i, $operations, [$selOp]);
+		$opSelect->setHasDescriptiveElements(true);
+		$data[$i][] = $opSelect;
+		// attribute name
+		$attrVal = empty($_POST['attr_' . $i]) ? '' : $_POST['attr_' . $i];
+		$data[$i][] = new htmlInputField('attr_' . $i, $attrVal);
+		$valVal = empty($_POST['val_' . $i]) ? '' : $_POST['val_' . $i];
+		$data[$i][] = new htmlInputField('val_' . $i, $valVal);
+		// check input
+		if (($selOp == ADD) && !empty($attrVal) && empty($valVal)) {
+			$errors[] = new htmlStatusMessage('ERROR', _('Please enter a value to add.'), htmlspecialchars($attrVal));
+		}
+		if (($selOp == MOD) && !empty($attrVal) && empty($valVal)) {
+			$errors[] = new htmlStatusMessage('ERROR', _('Please enter a value to modify.'), htmlspecialchars($attrVal));
+		}
+	}
+	$operationsTable = new htmlResponsiveTable($operationsTitles, $data);
+	$container->add($operationsTable, 12);
+	// add more fields
+	$container->addVerticalSpacer('1rem');
+	$container->add(new htmlButton('addFields', _('Add more fields')), 12);
+	$container->add(new htmlHiddenInput('opcount', $opCount), 12);
+	// error messages
+	if (sizeof($errors) > 0) {
+		$container->addVerticalSpacer('5rem');
+		foreach ($errors as $error) {
+			$error->colspan = 5;
+			$container->add($error, 12);
+		}
+	}
+	// action buttons
+	$container->addVerticalSpacer('2rem');
+	$buttonGroup = new htmlGroup();
+	$buttonGroup->colspan = 3;
+	$applyButton = new htmlButton('applyChanges', _('Apply changes'));
+	$applyButton->setCSSClasses(['lam-primary']);
+	$buttonGroup->addElement($applyButton);
+	$buttonGroup->addElement(new htmlSpacer('10px', null));
+	$dryRunButton = new htmlButton('dryRun', _('Dry run'));
+	$dryRunButton->setCSSClasses(['lam-secondary']);
+	$buttonGroup->addElement($dryRunButton);
+	$container->add($buttonGroup, 12);
+	$container->addVerticalSpacer('1rem');
+
+	// run actions
+	if ((sizeof($errors) == 0) && (isset($_POST['dryRun']) || isset($_POST['applyChanges']))) {
+		runActions($container);
+	}
+
+	addSecurityTokenToMetaHTML($container);
+
+	parseHtml(null, $container, [], false, 'user');
+	echo "</form>\n";
+	echo '</div>';
+	include __DIR__ . '/../../lib/adminFooter.inc';
+}
+
+/**
+ * Runs the dry run and change actions.
+ *
+ * @param htmlResponsiveRow $container container
+ */
+function runActions(htmlResponsiveRow &$container): void {
+	// LDAP suffix
+	if ($_POST['suffix'] == '-') {
+		$suffix = trim($_POST['otherSuffix']);
+	}
+	else {
+		$suffix = $_POST['suffix'];
+	}
+	if (empty($suffix)) {
+		$error = new htmlStatusMessage('ERROR', _('LDAP Suffix is invalid!'));
+		$error->colspan = 5;
+		$container->add($error, 12);
+		return;
+	}
+	// LDAP filter
+	$filter = trim($_POST['filter']);
+	// operations
+	$operations = [];
+	for ($i = 0; $i < $_POST['opcount']; $i++) {
+		if (!empty($_POST['attr_' . $i])) {
+			$operations[] = [$_POST['op_' . $i], strtolower(trim($_POST['attr_' . $i])), trim($_POST['val_' . $i])];
+		}
+	}
+	if (sizeof($operations) == 0) {
+		$error = new htmlStatusMessage('ERROR', _('Please specify at least one operation.'));
+		$error->colspan = 5;
+		$container->add($error, 12);
+		return;
+	}
+	$_SESSION['multiEdit_suffix'] = $suffix;
+	$_SESSION['multiEdit_filter'] = $filter;
+	$_SESSION['multiEdit_operations'] = $operations;
+	$_SESSION['multiEdit_status'] = ['stage' => STAGE_START];
+	$_SESSION['multiEdit_dryRun'] = isset($_POST['dryRun']);
+	// disable all input elements
+	$jsContent = '
+		jQuery(\'input\').attr(\'disabled\', true);
+		jQuery(\'select\').attr(\'disabled\', true);
+		jQuery(\'button\').attr(\'disabled\', true);
+	';
+	$container->add(new htmlJavaScript($jsContent));
+	// progress area
+	$container->add(new htmlSubTitle(_('Progress')));
+	$container->add(new htmlProgressbar('progressBar'));
+	$progressDiv = new htmlDiv('progressArea', new htmlOutputText(''));
+	$container->add($progressDiv);
+	// JS block for AJAX status update
+	$ajaxBlock = '
+		jQuery.get(\'multiEdit.php?ajaxStatus\', null, function(data) {handleReply(data);}, \'json\');
+
+		function handleReply(data) {
+			window.lam.progressbar.setProgress(\'progressBar\', data.progress);
+			jQuery(\'#progressArea\').html(data.content);
+			if (data.status != "finished") {
+				jQuery.get(\'multiEdit.php?ajaxStatus\', null, function(data) {handleReply(data);}, \'json\');
+			}
+			else {
+				jQuery(\'input\').removeAttr(\'disabled\');
+				jQuery(\'select\').removeAttr(\'disabled\');
+				jQuery(\'button\').removeAttr(\'disabled\');
+				jQuery(\'#progressBar\').hide();
+			}
+		}
+	';
+	$container->add(new htmlJavaScript($ajaxBlock), 12);
+}
+
+/**
+ * Performs the modify operations.
+ */
+function runAjaxActions(): void {
+	$jsonReturn = [
+		'status' => STAGE_START,
+		'progress' => 0,
+		'content' => ''
+	];
+	switch ($_SESSION['multiEdit_status']['stage']) {
+		case STAGE_START:
+			$jsonReturn = readLDAPData();
+			break;
+		case STAGE_READ_FINISHED:
+			$jsonReturn = generateActions();
+			break;
+		case STAGE_ACTIONS_CALCULATED:
+		case STAGE_WRITING:
+			if ($_SESSION['multiEdit_dryRun']) {
+				$jsonReturn = dryRun();
+			}
+			else {
+				$jsonReturn = doModify();
+			}
+			break;
+	}
+	echo json_encode($jsonReturn, JSON_THROW_ON_ERROR);
+}
+
+/**
+ * Reads the LDAP entries from the directory.
+ *
+ * @return array<mixed> status
+ */
+function readLDAPData(): array {
+	$suffix = $_SESSION['multiEdit_suffix'];
+	$filter = $_SESSION['multiEdit_filter'];
+	if (empty($filter)) {
+		$filter = '(objectClass=*)';
+	}
+	$operations = $_SESSION['multiEdit_operations'];
+	$attributes = [];
+	foreach ($operations as $op) {
+		if (!in_array(strtolower($op[1]), $attributes)) {
+			$attributes[] = strtolower($op[1]);
+			$attributes = array_merge($attributes, extractWildcards($op[2]));
+		}
+	}
+	$attributes = array_values(array_unique($attributes));
+	// run LDAP query
+	$results = searchLDAP($suffix, $filter, $attributes);
+	// print error message if no data returned
+	if (empty($results)) {
+		$code = ldap_errno($_SESSION['ldap']->server());
+		if ($code !== 0) {
+			$msg = new htmlStatusMessage('ERROR', _('Encountered an error while performing search.'), getDefaultLDAPErrorString($_SESSION['ldap']->server()));
+		}
+		else {
+			$msg = new htmlStatusMessage('ERROR', _('No objects found!'));
+		}
+		$content = getMessageHTML($msg);
+		return [
+			'status' => STAGE_FINISHED,
+			'progress' => 100,
+			'content' => $content
+		];
+	}
+	// save LDAP data
+	$_SESSION['multiEdit_status']['entries'] = $results;
+	$_SESSION['multiEdit_status']['stage'] = STAGE_READ_FINISHED;
+	return [
+		'status' => STAGE_READ_FINISHED,
+		'progress' => 10,
+		'content' => ''
+	];
+}
+
+/**
+ * Generates the required actions based on the read LDAP data.
+ *
+ * @return array<mixed> status
+ */
+function generateActions(): array {
+	$actions = [];
+	foreach ($_SESSION['multiEdit_status']['entries'] as $entry) {
+		$dn = $entry['dn'];
+		foreach ($_SESSION['multiEdit_operations'] as $op) {
+			$opType = $op[0];
+			$attr = $op[1];
+			$val = replaceWildcards($op[2], $entry);
+			switch ($opType) {
+				case ADD:
+					if (empty($entry[$attr]) || !in_array_ignore_case($val, $entry[$attr])) {
+						$actions[] = [ADD, $dn, $attr, $val];
+					}
+					break;
+				case MOD:
+					if (empty($entry[$attr])) {
+						// attribute not yet exists, add it
+						$actions[] = [ADD, $dn, $attr, $val];
+					}
+					elseif (!empty($entry[$attr]) && !in_array_ignore_case($val, $entry[$attr])) {
+						// attribute exists and value is not included, replace old values
+						$actions[] = [MOD, $dn, $attr, $val];
+					}
+					break;
+				case DEL:
+					if (empty($val) && !empty($entry[$attr])) {
+						$actions[] = [DEL, $dn, $attr, null];
+					}
+					elseif (!empty($val) && isset($entry[$attr]) && in_array($val, $entry[$attr])) {
+						$actions[] = [DEL, $dn, $attr, $val];
+					}
+					break;
+			}
+		}
+	}
+	// save actions
+	$_SESSION['multiEdit_status']['actions'] = $actions;
+	$_SESSION['multiEdit_status']['stage'] = STAGE_ACTIONS_CALCULATED;
+	return [
+		'status' => STAGE_ACTIONS_CALCULATED,
+		'progress' => 20,
+		'content' => ''
+	];
+}
+
+/**
+ * Prints the dryRun output.
+ *
+ * @return array<mixed> status
+ */
+function dryRun(): array {
+	$pro = isLAMProVersion() ? ' Pro' : '';
+	$ldif = '# LDAP Account Manager' . $pro . ' ' . LAMVersion() . "\n\nversion: 1\n\n";
+	$log = '';
+	// fill LDIF and log file
+	$lastDN = '';
+	foreach ($_SESSION['multiEdit_status']['actions'] as $action) {
+		$opType = $action[0];
+		$dn = $action[1];
+		$attr = $action[2];
+		$val = $action[3];
+		if ($lastDN != $dn) {
+			if ($lastDN != '') {
+				$log .= "\r\n";
+			}
+			$lastDN = $dn;
+			$log .= $dn . "\r\n";
+		}
+		if ($lastDN != '') {
+			$ldif .= "\n";
+		}
+		$ldif .= 'dn: ' . $dn . "\n";
+		$ldif .= 'changetype: modify' . "\n";
+		switch ($opType) {
+			case ADD:
+				$log .= '+' . $attr . '=' . $val . "\r\n";
+				$ldif .= 'add: ' . $attr . "\n";
+				$ldif .= $attr . ': ' . $val . "\n";
+				break;
+			case DEL:
+				$ldif .= 'delete: ' . $attr . "\n";
+				if (empty($val)) {
+					$log .= '-' . $attr . "\r\n";
+				}
+				else {
+					$log .= '-' . $attr . '=' . $val . "\r\n";
+					$ldif .= $attr . ': ' . $val . "\n";
+				}
+				break;
+			case MOD:
+				$log .= '*' . $attr . '=' . $val . "\r\n";
+				$ldif .= 'replace: ' . $attr . "\n";
+				$ldif .= $attr . ': ' . $val . "\n";
+				break;
+		}
+	}
+	// build meta HTML
+	$container = new htmlTable();
+	$container->addElement(new htmlOutputText(_('Dry run finished.')), true);
+	$container->addVerticalSpace('20px');
+	// store LDIF
+	$tempFilesManager = new LamTemporaryFilesManager();
+	$fileName = $tempFilesManager->registerTemporaryFile('.ldif', 'ldif_');
+	$out = $tempFilesManager->openTemporaryFileForWrite($fileName);
+	fwrite($out, $ldif);
+	$container->addElement(new htmlOutputText(_('LDIF file')), true);
+	$ldifLink = new htmlLink($fileName, $tempFilesManager->getDownloadLink($fileName));
+	$ldifLink->setTargetWindow('_blank');
+	$container->addElement($ldifLink, true);
+	$container->addVerticalSpace('20px');
+	$container->addElement(new htmlOutputText(_('Log output')), true);
+	$container->addElement(new htmlInputTextarea('log', $log, 100, 30), true);
+	// generate HTML
+	fclose ($out);
+	ob_start();
+	parseHtml(null, $container, [], true, 'user');
+	$content = ob_get_contents();
+	ob_end_clean();
+	return [
+		'status' => STAGE_FINISHED,
+		'progress' => 100,
+		'content' => $content
+	];
+}
+
+/**
+ * Error handler
+ *
+ * @param int $errno error number
+ * @param string $errstr error message
+ * @param string $errfile error file
+ * @param int $errline error line
+ */
+function multiEditLdapErrorHandler($errno, $errstr, $errfile, $errline): void {
+	if ($errno === E_USER_ERROR) {
+		logNewMessage(LOG_ERR, 'Error occurred: ' . $errstr . " ($errfile: $errline)");
+		$_REQUEST['multiEdit_error'] = true;
+	}
+	elseif ($errno === E_USER_WARNING) {
+		logNewMessage(LOG_WARNING, 'Error occurred: ' . $errstr . " ($errfile: $errline)");
+		$_REQUEST['multiEdit_error'] = true;
+	}
+}
+
+/**
+ * Runs the actual modifications.
+ *
+ * @return array<mixed> status
+ */
+function doModify(): array {
+	set_error_handler('\LAM\TOOLS\MULTI_EDIT\multiEditLdapErrorHandler');
+	// initial action index
+	if (!isset($_SESSION['multiEdit_status']['index'])) {
+		$_SESSION['multiEdit_status']['index'] = 0;
+	}
+	// initial content
+	if (!isset($_SESSION['multiEdit_status']['modContent'])) {
+		$_SESSION['multiEdit_status']['modContent'] = '';
+	}
+	// run 10 modifications in each call
+	$localCount = 0;
+	while (($localCount < 10) && ($_SESSION['multiEdit_status']['index'] < sizeof($_SESSION['multiEdit_status']['actions']))) {
+		$action = $_SESSION['multiEdit_status']['actions'][$_SESSION['multiEdit_status']['index']];
+		$opType = $action[0];
+		$dn = $action[1];
+		$attr = $action[2];
+		$val = $action[3];
+		$_SESSION['multiEdit_status']['modContent'] .= htmlspecialchars($dn) . "<br>";
+		// run LDAP commands
+		$success = false;
+		switch ($opType) {
+			case ADD:
+				$success = ldap_mod_add($_SESSION['ldap']->server(), $dn, [$attr => [$val]]);
+				break;
+			case DEL:
+				if (empty($val)) {
+					$success = ldap_modify($_SESSION['ldap']->server(), $dn, [$attr => []]);
+				}
+				else {
+					$success = ldap_mod_del($_SESSION['ldap']->server(), $dn, [$attr => [$val]]);
+				}
+				break;
+			case MOD:
+				$success = ldap_modify($_SESSION['ldap']->server(), $dn, [$attr => [$val]]);
+				break;
+		}
+		if (!$success || isset($_REQUEST['multiEdit_error'])) {
+			$msg = new htmlStatusMessage('ERROR', getDefaultLDAPErrorString($_SESSION['ldap']->server()));
+			$_SESSION['multiEdit_status']['modContent'] .= getMessageHTML($msg);
+		}
+		$localCount++;
+		$_SESSION['multiEdit_status']['index']++;
+	}
+	// check if finished
+	if ($_SESSION['multiEdit_status']['index'] == sizeof($_SESSION['multiEdit_status']['actions'])) {
+		$_SESSION['multiEdit_status']['modContent'] .= '<br><br>' . _('Finished all operations.');
+		return [
+			'status' => STAGE_FINISHED,
+			'progress' => 100,
+			'content' => $_SESSION['multiEdit_status']['modContent']
+		];
+	}
+	// return current status
+	return [
+		'status' => STAGE_WRITING,
+		'progress' => 20 + (($_SESSION['multiEdit_status']['index'] / sizeof($_SESSION['multiEdit_status']['actions'])) * 80),
+		'content' => $_SESSION['multiEdit_status']['modContent']
+	];
+}
+
+/**
+ * Returns the HTML code for a htmlStatusMessage
+ *
+ * @param htmlStatusMessage $msg message
+ * @return string HTML code
+ */
+function getMessageHTML(htmlStatusMessage $msg): string {
+	ob_start();
+	parseHtml(null, $msg, [], true, 'user');
+	$content = ob_get_contents();
+	ob_end_clean();
+	if ($content === false) {
+		return '';
+	}
+	return $content;
+}

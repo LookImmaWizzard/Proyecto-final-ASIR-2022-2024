@@ -1,0 +1,85 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Apache configuration</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"><link rel="home" href="index.html" title="LDAP Account Manager - Manual"><link rel="up" href="apb.html" title="Appendix B. Security"><link rel="prev" href="apbs06.html" title="Protection of your LDAP password and directory contents"><link rel="next" href="apbs08.html" title="Nginx configuration"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Apache configuration</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="apbs06.html">Prev</a> </td><th width="60%" align="center">Appendix B. Security</th><td width="20%" align="right"> <a accesskey="n" href="apbs08.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="apache"></a>Apache configuration</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm6786"></a>Security headers</h3></div></div></div><p>LAM already sets several security headers by default. For
+      production machines it is recommended to run LAM with "https://"
+      enabled. In this case the HSTS header should be set, e.g. like
+      this:</p><pre class="programlisting">Header always set Strict-Transport-Security "max-age=31536000"</pre><p>This will enforce browsers to connect via "https://". Please note
+      that you need to make sure that your installation has a valid
+      certificate now and in the future. The configuration requires
+      mod_headers to be active.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm6791"></a>Sensitive directories</h3></div></div></div><p>LAM includes several .htaccess files to protect your configuration
+      files and temporary data. Apache is often configured to not use
+      .htaccess files by default. Therefore, please check your Apache
+      configuration and change the override setting to:</p><p>AllowOverride All</p><p>If you are experienced in configuring Apache then you can also
+      copy the security settings from the .htaccess files to your main Apache
+      configuration.</p><p>If possible, you should not rely on .htaccess files but also move
+      the config and sess directory to a place outside of your WWW root. You
+      can put a symbolic link in the LAM directory so that LAM finds the
+      configuration/session files.</p><p>Security sensitive directories:</p><p><span class="bold"><strong>config: </strong></span>Contains your LAM
+      configuration and account profiles</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>LAM configuration passwords (SSHA hashed)</p></li><li class="listitem"><p>default values for new accounts</p></li><li class="listitem"><p>directory must be accessibly by Apache but needs not to be
+          accessible by the browser</p></li></ul></div><p><span class="bold"><strong>sess:</strong></span> PHP session files</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>LAM admin password in clear text or OpenSSL encrypted</p></li><li class="listitem"><p>cached LDAP entries in clear text or OpenSSL encrypted</p></li><li class="listitem"><p>directory must be accessibly by Apache but needs not to be
+          accessible by the browser</p></li></ul></div><p><span class="bold"><strong>tmp:</strong></span> temporary files</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>PDF documents which may also include passwords</p></li><li class="listitem"><p>images of your users</p></li><li class="listitem"><p>directory contents must be accessible by browser but directory
+          itself needs not to be browsable</p></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="apache_http_auth"></a>Use LDAP HTTP authentication for LAM</h3></div></div></div><p>With HTTP authentication Apache will be responsible to ask for the
+      user name and password. Both will then be forwarded to LAM which will
+      use it to access LDAP. This approach gives you more flexibility to
+      restrict the number of users that may access LAM (e.g. by requiring
+      group memberships).</p><p>First of all you need to load additional Apache modules. These are
+      "<a class="ulink" href="http://httpd.apache.org/docs/2.2/mod/mod_ldap.html" target="_top">mod_ldap</a>"
+      and "<a class="ulink" href="http://httpd.apache.org/docs/2.2/mod/mod_authnz_ldap.html" target="_top">mod_authnz_ldap</a>".</p><p>Next you can add a file called "lam_auth_ldap" to
+      /etc/apache/conf.d. This simple example restricts access to all URLs
+      beginning with "lam" to LDAP authentication.</p><pre class="programlisting">&lt;location /lam&gt;
+  AuthType Basic
+  AuthBasicProvider ldap
+  AuthName "LAM"
+  AuthLDAPURL "ldap://localhost:389/ou=People,dc=company,dc=com?uid"
+  Require valid-user
+&lt;/location&gt;</pre><p>You can also require that your users belong to a certain Unix
+      group in LDAP:</p><pre class="programlisting">&lt;location /lam&gt;
+  AuthType Basic
+  AuthBasicProvider ldap
+  AuthName "LAM"
+  AuthLDAPURL "ldap://localhost:389/ou=People,dc=company,dc=com?uid"
+  Require valid-user
+  # force membership of lam-admins
+  AuthLDAPGroupAttribute memberUid
+  AuthLDAPGroupAttributeIsDN off
+  Require ldap-group cn=lam-admins,ou=group,dc=company,dc=com
+&lt;/location&gt;</pre><p>Please see the <a class="ulink" href="http://httpd.apache.org/docs/2.2/mod/mod_authnz_ldap.html" target="_top">Apache
+      documentation</a> for more details.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm6837"></a>Self Service behind proxy in DMZ (LAM Pro)</h3></div></div></div><p>In some cases you might want to make the self service accessible
+      via the internet. Here is an Apache config to forward only the required
+      URLs via a proxy server (lamproxy.company.com) in your DMZ to the
+      internal LAM server (lam.company.com).</p><p><span class="inlinemediaobject"><img src="images/selfServiceProxy.png"></span></p><p>This configuration allows your users to open
+      https://lamproxy.company.com which will then proxy the self service on
+      the internal server.</p><pre class="programlisting">&lt;VirtualHost lamproxy.company.com:443&gt;
+        ServerName lamproxy.company.com
+        ErrorLog /var/log/apache2/lam-proxy-error.log
+        CustomLog /var/log/apache2/lam-proxy-access.log combined
+        DocumentRoot /var/www/lam-proxy
+        &lt;Proxy *&gt;
+            Require all granted
+        &lt;/Proxy&gt;
+        SSLProxyEngine on
+        SSLEngine on
+        SSLCertificateFile /etc/apache2/ssl/apache.pem
+        ProxyPreserveHost On
+        ProxyRequests off
+        loglevel info
+
+        # redirect front page to self service login page
+        RewriteEngine on
+        RedirectMatch ^/$ /templates/selfService/selfServiceLogin.php?scope=user\&amp;name=lam
+
+        # proxy required URLs
+        ProxyPass /tmp https://lam.company.com/lam/tmp
+        ProxyPass /sess https://lam.company.com/lam/sess
+        ProxyPass /templates/lib https://lam.company.com/lam/templates/lib
+        ProxyPass /templates/selfService https://lam.company.com/lam/templates/selfService
+        ProxyPass /templates/misc https://lam.company.com/lam/templates/misc
+        ProxyPass /style https://lam.company.com/lam/style
+        ProxyPass /graphics https://lam.company.com/lam/graphics
+
+        ProxyPassReverse /tmp https://lam.company.com/lam/tmp
+        ProxyPassReverse /sess https://lam.company.com/lam/sess
+        ProxyPassReverse /templates/lib https://lam.company.com/lam/templates/lib
+        ProxyPassReverse /templates/selfService https://lam.company.com/lam/templates/selfService
+        ProxyPassReverse /templates/misc https://lam.company.com/lam/templates/misc
+        ProxyPassReverse /style https://lam.company.com/lam/style
+        ProxyPassReverse /graphics https://lam.company.com/lam/graphics
+&lt;/VirtualHost&gt;</pre></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs06.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs08.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Protection of your LDAP password and directory contents </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Nginx configuration</td></tr></table></div></body></html>

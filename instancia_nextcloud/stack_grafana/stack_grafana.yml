@@ -1,0 +1,76 @@
+#CABECERA
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: stackgrafana
+  name: stackgrafana #Nombre del pod
+spec:
+#CONTENEDORES
+  containers:
+  - name: prometheus #Nombre del contenedor
+    image: docker.io/prom/prometheus:latest
+    args: #Argumentos de ejecucion del contendor
+    - "--web.listen-address=127.0.0.1:9091" #Cambio del puerto de escucha
+    - "--config.file=/etc/prometheus/prometheus.yml" #Ubicacion del archivo de configuracion
+    resources: {}
+    securityContext:
+      capabilities: #Limitacion o concesion de privilegios para los contenedores
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+    volumeMounts:
+    - mountPath: /etc/prometheus:Z #Punto de montaje interno en el conentedor
+      name: srv-prometheus-etc-host-0 #Nombre del contenedor referenciado (Debe ser declarado en la seccion de voluemes)
+    - mountPath: /prometheus:Z
+      name: srv-prometheus-data-host-0
+  - name: grafana #Nombre del contenedor
+    image: docker.io/grafana/grafana:latest #Imagen para el despliegue del contenedor (Compatible con cualquier imagen OCI)
+    resources: {}
+    securityContext:
+      capabilities:
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+        - CAP_AUDIT_WRITE
+      privileged: false
+    volumeMounts:
+    - mountPath: /var/lib/grafana:Z
+      name: srv-grafana-data-host-0
+  - args:
+    - --path.rootfs=/host
+    image: docker.io/prom/node-exporter:latest
+    name: node_exporter
+    securityContext:
+      capabilities:
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+    volumeMounts:
+    - mountPath: /host
+      name: root-host-0
+      readOnly: true #El acceso al volumen es exclusivamente de lectura. Escritura denegada
+  restartPolicy: unless-stopped #Politica de reinicion en caso de fallo del contenedor
+  volumes: #Declaracion de volumenes
+  - hostPath:
+      path: /root/podman/instancia_nextcloud/stack_grafana/volumes/prometheus/etc #Ruta al volumen
+      type: Directory
+    name: srv-prometheus-etc-host-0 #Nombre del volumen
+  - hostPath:
+      path: /root/podman/instancia_nextcloud/stack_grafana/volumes/prometheus/data
+      type: Directory
+    name: srv-prometheus-data-host-0
+  - hostPath:
+      path: /root/podman/instancia_nextcloud/stack_grafana/volumes/grafana/data
+      type: Directory
+    name: srv-grafana-data-host-0
+  - hostPath:
+      path: /
+      type: Directory
+    name: root-host-0
+  enableServiceLinks: false
+  hostNetwork: true #Acceso a la red del host
+

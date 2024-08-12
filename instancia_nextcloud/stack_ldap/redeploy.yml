@@ -1,0 +1,43 @@
+apiVersion: v1 
+kind: Pod 
+metadata: 
+ labels: 
+   app: proyecto_stackldap 
+ name: proyecto_stackldap 
+spec: 
+ volumes: 
+ - name: lam_config 
+   hostPath: 
+     path: /root/podman/proyecto/stack_ldap/volumes/lam/lam_config
+ - name: openldap_config 
+   hostPath: 
+     path: /root/podman/proyecto/stack_ldap/volumes/openldap/config
+ - name: openldap_database 
+   hostPath: 
+     path: /root/podman/proyecto/stack_ldap/volumes/openldap/database
+ containers: 
+ - env: 
+   - name: LAM_LANG 
+     value: es_ES 
+   - name: LAM_SKIP_PRECONFIGURE
+     value: true
+   image: ghcr.io/ldapaccountmanager/lam:latest #o 8.6
+   securityContext:
+    fsGroup: 33
+   name: lam 
+   tty: true 
+   volumeMounts: 
+   - mountPath: /var/lib/ldap-account-manager/config:Z
+     name: lam_config 
+ - env: 
+   - name: KEEP_EXISTING_CONFIG 
+     value: "true" 
+   image: docker.io/osixia/openldap:1.5.0 
+   securityContext:
+   name: openldap 
+   tty: true 
+   volumeMounts: 
+   - mountPath: /etc/ldap/slapd.d:Z
+     name: openldap_config 
+   - mountPath: /var/lib/ldap:Z
+     name: openldap_database 

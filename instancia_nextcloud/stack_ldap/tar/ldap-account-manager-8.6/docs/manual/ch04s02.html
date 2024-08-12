@@ -1,0 +1,348 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Users</title><link rel="stylesheet" type="text/css" href="style.css"><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"><link rel="home" href="index.html" title="LDAP Account Manager - Manual"><link rel="up" href="ch04.html" title="Chapter 4. Managing entries in your LDAP directory"><link rel="prev" href="ch04.html" title="Chapter 4. Managing entries in your LDAP directory"><link rel="next" href="ch04s03.html" title="Groups"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Users</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch04.html">Prev</a> </td><th width="60%" align="center">Chapter 4. Managing entries in your LDAP directory</th><td width="20%" align="right"> <a accesskey="n" href="ch04s03.html">Next</a></td></tr></table><hr></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="idm1922"></a>Users</h2></div></div></div><p>LAM manages various types of user accounts. This includes address
+    book entries, Unix, Samba, Kopano and much more.</p><div class="literallayout"><p><br>
+</p></div><p><span class="bold"><strong>Account list settings:</strong></span></p><p>The user list includes two special options to change how your users
+    are displayed.</p><div class="screenshot"><div class="mediaobject"><img src="images/userListOptions.png"></div></div><p><span class="emphasis"><em>Translate GID number to group name:</em></span> By default
+    the user list can show the primary group IDs (GIDs) of your users. There
+    are often cases where it is more suitable to show the group name instead.
+    This can be done by activating this option. Please note that LAM will
+    execute more LDAP queries which may result in decreased
+    performance.</p><div class="screenshot"><div class="mediaobject"><img src="images/userListOptionTransPrimary.png"></div></div><p><span class="emphasis"><em>Show account status:</em></span> If you activate this
+    option then there will be an additional column displayed that shows if the
+    account is locked or expired. You can see more details when moving the
+    mouse cursor over the lock icon. This function supports Unix, Samba,
+    PPolicy, Windows and 389ds locking+deactivation.</p><div class="screenshot"><div class="mediaobject"><img src="images/userListOptionAccountStatus.png"></div></div><div class="literallayout"><p><br>
+</p></div><p><span class="bold"><strong>Password:</strong></span></p><p>Click the "Set password" button to change the user's password(s).
+    Depending on the active account modules LAM will offer to change multiple
+    passwords at the same time.</p><p>If a module supports to enforce a password change then you will see
+    the appropriate checkbox. LAM Pro also offers to send the password via
+    email after the account is saved. Email options are specified in your
+    <a class="link" href="ch03s02.html#profile_mail">LAM server profile</a>.</p><div class="screenshot"><div class="mediaobject"><img src="images/password1.png"></div></div><div class="literallayout"><p><br>
+</p></div><p><span class="bold"><strong>Quick account (un)locking:</strong></span></p><p>When you edit an user then LAM supports to quickly lock/unlock the
+    whole account. This includes Unix, Samba and PPolicy. LAM can also remove
+    group memberships if an account is locked.</p><p>You will see the current status of all account parts in the title
+    area of the account.</p><div class="screenshot"><div class="mediaobject"><img src="images/userAccountStatus1.png"></div></div><p>If you click on the lock icon then a dialog will be opened to change
+    these values. Depending on which parts are locked LAM will provide options
+    to lock/unlock account parts.</p><div class="screenshot"><div class="mediaobject"><img src="images/userAccountStatus2.png"></div></div><div class="screenshot"><div class="mediaobject"><img src="images/userAccountStatus3.png"></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm1973"></a>Personal</h3></div></div></div><p>This module is the most common basis for user accounts in LAM. You
+      can use it stand-alone to manage address book entries or in combination
+      with Unix, Samba or other modules.</p><p>The Personal module provides support for managing various personal
+      data of your users including mail addresses and telephone numbers. You
+      can also add photos of your users. If you do not need to manage all
+      attributes then you can deactivate them in your server profile.</p><p><span class="bold"><strong>Configuration</strong></span></p><p>Please activate the module "Personal (inetOrgPerson)" for
+      users.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_personal3.png"></div></div><p>The module manages lots of fields. Probably, you will not need all
+      of them. You can hide fields in module settings.</p><p>In advanced options you may also set fields to read-only (for
+      existing accounts) and define limits for photo files. Additionally, you
+      can add an "ou=addressbook" subentry to each user in case you manage
+      user addressbooks.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_personal4.png"></div></div><div class="literallayout"><p><br>
+</p></div><p><span class="bold"><strong>User management</strong></span></p><div class="screenshot"><div class="mediaobject"><img src="images/mod_personal.png"></div></div><p>User certificates can be uploaded and downloaded. LAM will
+      automatically convert PEM to DER format.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_personal2.png"></div></div><div class="table"><a name="idm2002"></a><p class="title"><b>Table 4.1. LDAP attribute mappings</b></p><div class="table-contents"><table class="table" summary="LDAP attribute mappings" border="1"><colgroup><col><col></colgroup><thead><tr><th align="center">Attribute name</th><th align="center">Name inside LAM</th></tr></thead><tbody><tr><td>businessCategory</td><td>Business category</td></tr><tr><td>carLicense</td><td>Car license</td></tr><tr><td>cn/commonName</td><td>Common name</td></tr><tr><td>departmentNumber</td><td>Department(s)</td></tr><tr><td>description</td><td>Description</td></tr><tr><td>employeeNumber</td><td>Employee number</td></tr><tr><td>employeeType</td><td>Employee type</td></tr><tr><td>facsimileTelephoneNumber/fax</td><td>Fax number</td></tr><tr><td>givenName/gn</td><td>First name</td></tr><tr><td>homePhone</td><td>Home telephone number</td></tr><tr><td>initials</td><td>Initials</td></tr><tr><td>jpegPhoto</td><td>Photo</td></tr><tr><td>l</td><td>Location</td></tr><tr><td>labeledURI</td><td>Web site</td></tr><tr><td>mail/rfc822Mailbox</td><td>Email address</td></tr><tr><td>manager</td><td>Manager</td></tr><tr><td>mobile/mobileTelephoneNumber</td><td>Mobile number</td></tr><tr><td>organizationName/o</td><td>Organisation</td></tr><tr><td>ou</td><td>Organizational unit</td></tr><tr><td>pager</td><td>Pager number</td></tr><tr><td>physicalDeliveryOfficeName</td><td>Office name</td></tr><tr><td>postalAddress</td><td>Postal address</td></tr><tr><td>postalCode</td><td>Postal code</td></tr><tr><td>postOfficeBox</td><td>Post office box</td></tr><tr><td>registeredAddress</td><td>Registered address</td></tr><tr><td>roomNumber</td><td>Room number</td></tr><tr><td>sn/surname</td><td>Last name</td></tr><tr><td>st</td><td>State</td></tr><tr><td>street/streetAddress</td><td>Street</td></tr><tr><td>telephoneNumber</td><td>Telephone number</td></tr><tr><td>title</td><td>Job title</td></tr><tr><td>userCertificate</td><td>User certificates</td></tr><tr><td>uid/userid</td><td>User name</td></tr><tr><td>userPassword</td><td>Password</td></tr></tbody></table></div></div><br class="table-break"><p><span class="bold"><strong>Wildcards</strong></span></p><p>This module provides the following wildcards (others may be
+      provided by other modules). Add a "_" after the "$" to get the value in
+      lower-case (e.g. "$_firstname").</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>$firstname: First name</p></li><li class="listitem"><p>$lastname: Last name</p></li><li class="listitem"><p>$user: User name</p></li><li class="listitem"><p>$commonname: Common name</p></li><li class="listitem"><p>$email: Email address</p></li></ul></div><p>You can use them in the following input fields on user edit
+      screen:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Common name</p></li><li class="listitem"><p>Description</p></li><li class="listitem"><p>Mail</p></li><li class="listitem"><p>Postal address</p></li><li class="listitem"><p>Registered address</p></li><li class="listitem"><p>Web site</p></li></ul></div><p>Use this when some of your data always follows the same schema.
+      E.g. using "$firstname $lastname" in common name field can be used like
+      this to get "First Last". You can set the wildcards in profile editor so
+      they are automatically applied for new users.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_personal5.png"></div></div><p></p><div class="screenshot"><div class="mediaobject"><img src="images/mod_personal6.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2150"></a>Unix</h3></div></div></div><p>The Unix module manages Unix user accounts including group
+      memberships.</p><p>There are several configuration options for this module:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>UID generator: LAM will suggest UID numbers for your accounts.
+          Please note that it may happen that there are duplicate IDs assigned
+          if users create accounts at the same time. Use an <a class="ulink" href="http://www.openldap.org/doc/admin24/overlays.html" target="_top">overlay</a>
+          like "Attribute Uniqueness" (<a class="link" href="apc.html#a_openldap_unique">example</a>) if you have lots of LAM
+          admins creating accounts.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>Fixed range: LAM searches for free numbers within the
+              given limits. LAM always tries to use a free UID that is greater
+              than the existing UIDs to prevent collisions with deleted
+              accounts.</p></li><li class="listitem"><p>Samba ID pool: This uses a special LDAP entry that
+              includes attributes that store a counter for the last used
+              UID/GID. Please note that this requires that you install the
+              Samba schema and create an LDAP entry of object class
+              "sambaUnixIdPool".</p></li><li class="listitem"><p>Magic number: Use this if your LDAP server assigns the UID
+              numbers automatically (e.g. DNA by 389 server). Enter the
+              server's magic number setting.</p></li></ul></div></li><li class="listitem"><p>Password hash type: If possible use CRYPT-SHA512 or SSHA to
+          protect your user's passwords. The option SASL will set the password
+          to "{SASL}&lt;user name&gt;". If you want to use an LDAP EXOP
+          password operation to update the password then select
+          LDAP_EXOP.</p></li><li class="listitem"><p>Login shells: List of valid login shells that can be selected
+          when editing an account.</p></li><li class="listitem"><p>Hidden options: Some input fields can be hidden to simplify
+          the GUI if you do not need them.</p></li><li class="listitem"><p>Set primary group as memberUid: By default primary group
+          membership is not set on group objects but only on user (gidNumber).
+          Activate this if you need to have the primary group membership in
+          group object, too.</p></li><li class="listitem"><p>Do not add object class: This is for Windows only. When the
+          checkbox is activated then the posixAccount object class will not be
+          added to a user.</p></li><li class="listitem"><p>User name suggestion: The user name is automatically filled as
+          specified in the configuration (default smiller for Steve Miller).
+          Of course, the suggested value can be changed any time. Common name
+          is also filled with first/last name by default.</p></li></ul></div><div class="screenshot"><div class="mediaobject"><img src="images/mod_unixUserConfig.png"></div></div><div class="literallayout"><p><br>
+</p></div><div class="screenshot"><div class="mediaobject"><img src="images/mod_unixUser.png"></div></div><p>Group memberships can be changed when clicking on "Edit groups".
+      Here you can select the Unix groups and group of names
+      memberships.</p><p>To enable "Group of names" please either add the groups module
+      "groupOfNames"/"groupOfUniqueNames" or add the account type "Group of
+      names".</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_unixUserGroups.png"></div></div><p>You can also create home directories for your users if you setup
+      <a class="link" href="apd.html" title="Appendix D. Setup for home directory and quota management">lamdaemon</a>. This allows you to create
+      the directories on the local or remote servers.</p><p>It is also possible to check the status of the user's home
+      directories. If needed the directories can be created or removed at any
+      time.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_unixUserHomedir.png"></div></div><p><span class="bold"><strong>Wildcards</strong></span></p><p>This module provides the following wildcards (others may be
+      provided by other modules). Add a "_" after the "$" to get the value in
+      lower-case (e.g. "$_user").</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>$user: User name</p></li><li class="listitem"><p>$group: Group name (not numeric number)</p></li></ul></div><p>You can use them in the following input fields on user edit
+      screen:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Common name</p></li><li class="listitem"><p>Gecos</p></li><li class="listitem"><p>Home directory</p></li></ul></div><p>Use this when some of your data always follows the same schema.
+      E.g. using "/home/$user" in home directory field can be used like this
+      to get "/home/myuser". You can set the wildcards in profile editor so
+      they are automatically applied for new users.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_unixUserWildcard1.png"></div></div><p></p><div class="screenshot"><div class="mediaobject"><img src="images/mod_unixUserWildcard2.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2226"></a>Group of names and group of members (LAM Pro)</h3></div></div></div><p>This module manages memberships in group of (unique) names and
+      also group of members.</p><p>Please note that this module cannot be used if the Unix module is
+      active. In this case group memberships may be managed with the Unix
+      module.</p><p><span class="bold"><strong>Configuration</strong></span></p><p>To activate this feature please add the user module "Group of
+      names (groupOfNamesUser)" to your LAM server profile.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_groupOfNamesUser2.png"></div></div><p>The module automatically detects if groups are based on
+      "groupOfNames", "groupOfUniqueNames" or "groupOfMembers" and sets the
+      correct attribute.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_groupOfNamesUser.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="organizationalRoleUser"></a>Organizational roles (LAM Pro)</h3></div></div></div><p>LAM can manage role memberships in <a class="link" href="ch04s07.html" title="Organizational roles (LAM Pro)">organizationalRole</a> objects. To
+      activate this feature please add the user module "Roles
+      (organizationalRoleUser)" to your LAM server profile.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_organizationalRoleUser1.png"></div></div><p><span class="bold"><strong>User editing</strong></span></p><p>Now, there will be a new tab "Roles" when you edit your user
+      accounts. Here you can select the role memberships.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_organizationalRoleUser2.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2257"></a>Shadow</h3></div></div></div><p>LAM supports the management of the LDAP substitution of
+      /etc/shadow. Here you can setup password policies for your Unix accounts
+      and also view the last password change of a user.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_shadow.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2264"></a>NIS net groups</h3></div></div></div><p><span class="bold"><strong>Configuration</strong></span></p><p>Please add the module "NIS net groups (nisNetGroupUser)" to the
+      list of active user modules.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_nisNetGroupUser1.png"></div></div><p><span class="bold"><strong>User editing</strong></span></p><p>You will now see a new tab when editing users. Here you can assign
+      memberships in NIS net groups and also set host/domain.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_nisNetGroupUser2.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2280"></a>Password self reset (LAM Pro)</h3></div></div></div><p>LAM Pro allows your users to reset their passwords by answering a
+      security question. The reset link is displayed on the <a class="link" href="ch07s03.html#PasswordSelfReset" title="Password self reset">self service page</a>. Additionally, you
+      can set question + answer in the admin interface.</p><p>Please note that self service and LAM admin interface are
+      separated functionalities. You need to specify the list of possible
+      security questions in both self service profile(s) and server
+      profile(s).</p><p><span class="bold"><strong>Schema installation</strong></span></p><p>Please install the LDAP schema as described <a class="link" href="ape.html" title="Appendix E. Setup password self reset schema (LAM Pro)">here</a>.</p><p><span class="bold"><strong>Activate password self reset
+      module</strong></span></p><p>Please activate the password self reset module in your LAM Pro
+      server profile.</p><div class="screenshot"><div class="mediaobject"><img src="images/passwordSelfReset7.png"></div></div><p>Now select the tab "Module settings" and specify the list of
+      possible security questions. Only these questions will be selectable
+      when you later edit accounts unless you explicitly allow to enter custom
+      questions. LAM Pro supports to set up to three security questions per
+      user.</p><p>If you do not want to set backup email addresses then you can hide
+      this option.</p><div class="screenshot"><div class="mediaobject"><img src="images/passwordSelfReset8.png"></div></div><p><span class="bold"><strong>Edit users</strong></span></p><p>After everything is setup please login to LAM Pro and edit your
+      users. You will see a new tab called "Password self reset". Here you can
+      activate/remove the password self reset function for each user. You can
+      also change the security question and answer.</p><p>If you set a backup email address then confirmation emails will
+      also be sent to this address. This is useful if the user password grants
+      access to the user's primary mailbox. So passwords can be unlocked with
+      an external email address.</p><p><span class="bold"><strong>Hint:</strong></span> You can add the
+      passwordSelfReset object class to all your users with the <a class="link" href="ch05s04.html#toolMultiEdit">multi edit</a> tool.</p><p><span class="bold"><strong>Samba 4 note:</strong></span> Due to a <a class="ulink" href="https://bugzilla.samba.org/show_bug.cgi?id=10094" target="_top">bug</a> in
+      Samba 4 you need to add the extension, save, and then select a question
+      and set the answer. If you add the extension, set question/answer and
+      then save all together this will cause an LDAP error and no changes will
+      be saved.</p><div class="screenshot"><div class="mediaobject"><img src="images/passwordSelfReset9.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2316"></a>Hosts</h3></div></div></div><p>You can specify a list of valid host names where the user may
+      login. If you add the value "*" then the user may login to any host.
+      This can be further restricted by adding explicit deny entries which are
+      prefixed with "!" (e.g. "!hr_server").</p><p>Please note that your PAM settings need to support host
+      restrictions. This feature is enabled by setting <span class="bold"><strong>pam_check_host_attr yes</strong></span> in your <span class="bold"><strong>/etc/pam_ldap.conf</strong></span>. When it is enabled then the
+      account facility of pam_ldap will perform the checks and return an error
+      when no proper host attribute is present. Please note that users without
+      host attribute cannot login to such a configured server.</p><div class="screenshot"><div class="mediaobject"><img src="images/hostObject.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2326"></a>Samba 3</h3></div></div></div><p>LAM supports full Samba 3 user management including logon hours
+      and terminal server options.</p><p>The module is enabled by adding "Samba 3 (sambaSamAccount)" to
+      your user modules.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_samba3Config2.png"></div></div><p>In the configuration options you can enable password history
+      checking. Depending on your LDAP server you might need ascending or
+      descending order. Just switch the setting if the password history is not
+      correctly updated.</p><p>In case you have no very old Windows clients (e.g. Windows 98) it
+      is recommended to disable LM hashes. They are considered to be
+      insecure.</p><p>You can also hide some input fields if you do not need
+      them.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_samba3Config1.png"></div></div><p>After configuring the module you will see the Samba 3 tab when you
+      edit a user.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_samba3User1.png"></div></div><p>Logon hours can be changed.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_samba3User2.png"></div></div><p>You can also setup terminal server settings.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_samba3User3.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2356"></a>Windows (Samba 4/Active Directory)</h3></div></div></div><p>Please activate the account type "Users" in your LAM server
+      profile and then add the user module "Windows (windowsUser)(*)".</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_windowsUser4.png"></div></div><p>The default list attributes are for Unix and not suitable for
+      Windows (blank lines in account table). Please use
+      "#cn;#givenName;#sn;#mail" or select your own attributes to display in
+      the account list.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_windowsUser1.png"></div></div><p>On tab "Module settings" you can specify the possible Windows
+      domain names and if pre-Windows 2000 user names should be
+      managed.</p><p>NIS support is deactivated by default. Enable it if needed.</p><p>You can also set maximum values for user photos in advanced
+      options.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_windowsUser5.png" width="1172"></div></div><p>Now you can manage your Windows users and e.g. assign groups. You
+      might want to set the default domain name in the <a class="link" href="ch05.html#a_accountProfile" title="Profile editor">profile editor</a>.</p><p><span class="bold"><strong>Attention:</strong></span></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Password changes require a secure connection via ldaps://.
+          Check your LAM server profile if password changes are refused by the
+          server.</p></li><li class="listitem"><p>Your server must run a 64bit operating system. Otherwise, the
+          module might not work.</p></li></ul></div><div class="screenshot"><div class="mediaobject"><img src="images/mod_windowsUser2.png"></div></div><div class="screenshot"><div class="mediaobject"><img src="images/mod_windowsUser3.png"></div></div><p><span class="bold"><strong>Wildcards</strong></span></p><p>This module provides the following wildcards (others may be
+      provided by other modules). Add a "_" after the "$" to get the value in
+      lower-case (e.g. "$_firstname").</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>$firstname: First name</p></li><li class="listitem"><p>$lastname: Last name</p></li><li class="listitem"><p>$user: User name</p></li><li class="listitem"><p>$commonname: Common name</p></li><li class="listitem"><p>$email: Email address</p></li></ul></div><p>You can use them in the following input fields on user edit
+      screen:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Common name</p></li><li class="listitem"><p>Display name</p></li><li class="listitem"><p>Email</p></li><li class="listitem"><p>Email alias</p></li><li class="listitem"><p>Home directory</p></li><li class="listitem"><p>Profile path</p></li><li class="listitem"><p>Script path</p></li><li class="listitem"><p>User name</p></li><li class="listitem"><p>User name (pre W2K)</p></li></ul></div><p>Use this when some of your data always follows the same schema.
+      E.g. using "$firstname $lastname" in common name field can be used like
+      this to get "First Last". You can set the wildcards in profile editor so
+      they are automatically applied for new users.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_windowsUser6.png"></div></div><p></p><div class="screenshot"><div class="mediaobject"><img src="images/mod_windowsUser7.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2436"></a>AD LDS (formerly ADAM) (LAM Pro)</h3></div></div></div><p>Please activate the account type "Users" in your LAM server
+      profile and then add the user module "AD LDS
+      (windowsLDSUser)(*)".</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_windowsUser4.png"></div></div><p>The default list attributes are for Unix and not suitable for AD
+      LDS (blank lines in account table). Please use
+      "#cn;#givenName;#sn;#mail" or select your own attributes to display in
+      the account list.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_adLds1.png"></div></div><p>On tab "Module settings" you can specify the possible Windows
+      domain names.</p><p>You can also set maximum values for user photos in advanced
+      options.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_adLds3.png" width="1172"></div></div><p>Now you can manage your AD LDS users and e.g. assign groups. You
+      might want to set the default domain name in the <a class="link" href="ch05.html#a_accountProfile" title="Profile editor">profile editor</a>.</p><p><span class="bold"><strong>Attention:</strong></span></p><p>Password changes require a secure connection via ldaps://. Check
+      your LAM server profile if password changes are refused by the
+      server.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_adLds4a.png"></div></div><div class="screenshot"><div class="mediaobject"><img src="images/mod_adLds4b.png"></div></div><p><span class="bold"><strong>Wildcards</strong></span></p><p>This module provides the following wildcards (others may be
+      provided by other modules). Add a "_" after the "$" to get the value in
+      lower-case (e.g. "$_firstname").</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>$firstname: First name</p></li><li class="listitem"><p>$lastname: Last name</p></li><li class="listitem"><p>$user: User name</p></li><li class="listitem"><p>$commonname: Common name</p></li><li class="listitem"><p>$email: Email address</p></li></ul></div><p>You can use them in the following input fields on user edit
+      screen:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Common name</p></li><li class="listitem"><p>Display name</p></li><li class="listitem"><p>Email</p></li><li class="listitem"><p>Email alias</p></li></ul></div><p>Use this when some of your data always follows the same schema.
+      E.g. using "$firstname $lastname" in common name field can be used like
+      this to get "Demo User". You can set the wildcards in profile editor so
+      they are automatically applied for new users.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_adLds5a.png"></div></div><p></p><div class="screenshot"><div class="mediaobject"><img src="images/mod_adLds5b.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2501"></a>Filesystem quota (lamdaemon)</h3></div></div></div><p>You can manage file system quotas with LAM. This requires to setup
+      <a class="link" href="apd.html" title="Appendix D. Setup for home directory and quota management">lamdaemon</a>. LAM connects to your
+      server via SSH and manages the disk filesystem quotas. The quotas are
+      stored directly on the filesystem. This is the default mechanism to
+      store quotas for most systems.</p><p>Please add the module "Quota (quota)" for users to your LAM server
+      profile to enable this feature.</p><p>If you store the quota information directly inside LDAP please see
+      the next section.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_quotaUser.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2511"></a>Filesystem quota (LDAP)</h3></div></div></div><p>You can store your filesystem quotas directly in LDAP. See <a class="ulink" href="http://sourceforge.net/projects/linuxquota/" target="_top">Linux
+      DiskQuota</a> for details since it requires quota tools that support
+      LDAP. You will need to install the quota LDAP schema to manage the
+      object class "systemQuotas".</p><p>Please add the module "Quota (systemQuotas)" for users to your LAM
+      server profile to enable this feature.</p><p>If you store the quota information on the filesystem please see
+      the previous section.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_systemQuotas.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2521"></a>Kolab</h3></div></div></div><p>This module supports to manage Kolab accounts with LAM. E.g. you
+      can set the user's mail quota and define invitation policies.</p><p>Please add the Kolab user module in your LAM server profile to
+      activate Kolab support.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_kolab2.png"></div></div><p>Please enter an email address at the Personal page and set a Unix
+      password first. Both are required that Kolab accepts the accounts. The
+      email address ("Personal" page) must match your Kolab domain, otherwise
+      the account will not work.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_kolab.png"></div></div><p>If you upgrade existing non-Kolab accounts please make sure that
+      the account has an Unix password.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2535"></a>Asterisk</h3></div></div></div><p>LAM supports Asterisk accounts, too. See the <a class="link" href="ch04s09.html" title="Asterisk">Asterisk</a> section for details.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2539"></a>EDU person</h3></div></div></div><p>EDU person accounts are mainly used in university networks. You
+      can specify the principal name, nick names and much more.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_eduPerson.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2546"></a>PyKota</h3></div></div></div><p>There are two LAM user modules depending if your user entries
+      should be built on object class "pykotaObject" or a different structural
+      object class (e.g. "inetOrgPerson"). For "pykotaObject" please select
+      "PyKota (pykotaUserStructural(*))" and "PyKota (pykotaUser)" in all
+      other cases.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_pykotaUser1.png"></div></div><p>To display the job history please setup the job DN on tab "Module
+      settings":</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_pykotaUser2.png"></div></div><p>Now you can add the PyKota extension to your user accounts. Here
+      you can setup the printing options and add payments for this
+      user.</p><p>For LAM Pro there are also self service fields to allow users e.g.
+      to view their current balance and job history.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_pykotaUser3.png"></div></div><p>You may also view the payment and job history.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_pykotaUser4.png"></div></div><div class="screenshot"><div class="mediaobject"><img src="images/mod_pykotaUser5.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mod_passwordPolicy"></a>Password policy (LAM Pro)</h3></div></div></div><p>OpenLDAP supports the <a class="ulink" href="http://linux.die.net/man/5/slapo-ppolicy" target="_top">ppolicy</a> overlay
+      to manage password policies for LDAP entries. LAM Pro supports <a class="link" href="ch04s21.html" title="Password policies (LAM Pro)">managing the policies</a> and assigning them to
+      user accounts.</p><p>Please add the account type "Password policies" to your LAM server
+      profile and activate the "Password policy" module for the
+      user/group/host type.</p><div class="screenshot"><div class="mediaobject"><img src="images/ppolicyUser2.png"></div></div><p>You can select the password policy and force a password change on
+      next login. Accounts can also be (un)locked.</p><div class="screenshot"><div class="mediaobject"><img src="images/ppolicyUser.png"></div></div><p>You can assign any password policy which is found in the LDAP
+      suffix of the "Password policies" type. When you set the policy to
+      "default" then OpenLDAP will use the default policy as defined in your
+      slapd.conf file.</p><p><span class="bold"><strong>Attention:</strong></span> Locking and unlocking
+      requires that you also activate the option "Lockout users" in the
+      assigned <a class="link" href="ch04s21.html" title="Password policies (LAM Pro)">password policy</a>. Otherwise, it
+      will have no effect.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2592"></a>Account locking for 389ds (LAM Pro)</h3></div></div></div><p>This module allows you to display if users are locked by 389ds
+      server. You can (de)activate your users. The password expiration time
+      can also be managed.</p><p>Requirements: 389ds LDAP server</p><p><span class="bold"><strong>Configuration</strong></span></p><p>Please add the user module "Account locking
+      (locking389ds)".</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_389dsLocking1.png"></div></div><p>This will show the password expiration time. You can edit the
+      value if needed.</p><p>If there are any failed login attempts then LAM displays their
+      number and till when the user is locked by the system.</p><p>The limit of failed login attempts and lockout duration is
+      configured on your LDAP server and not within LAM.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_389dsLocking2.png"></div></div><p>You can unlock the user by clicking on the lock icon.</p><p>Here you can also (de)activate the account.</p><p>Note: Accounts are only locked by the LDAP server due to failed
+      password attempts. You cannot manually lock an account. Deactivate it in
+      case you want to disable login for a user.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_389dsLocking3.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2617"></a>FreeRadius</h3></div></div></div><p>FreeRadius is a software that implements the RADIUS authentication
+      protocol. LAM allows you to manage several of the FreeRadius
+      attributes.</p><p>To activate the FreeRadius plugin please activate the FreeRadius
+      user module in your server profile:</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_freeRadius1.png"></div></div><p>You can disable unneeded fields on the tab "Module settings". Here
+      you can also set the DN where your Radius profile templates are stored
+      if you use the option "Profile".</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_freeRadius2.png"></div></div><p>Now you will see the tab "FreeRadius" when editing users. The
+      extension can be (de)activated for each user. You can setup e.g. realm,
+      IP and expiration date.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_freeRadius3.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2635"></a>Heimdal Kerberos (LAM Pro)</h3></div></div></div><p>You can manage your Heimdal Kerberos accounts with LAM Pro. Please
+      add the user module "Kerberos (heimdalKerberos)" to activate this
+      feature.</p><p><span class="bold"><strong>Setup password changing</strong></span></p><p>LAM Pro cannot generate the password hashes itself because Heimdal
+      uses a proprietary format for them. Therefore, LAM Pro needs to call
+      e.g. kadmin to set the password.</p><p>The wildcards @@password@@ and @@principal@@ are replaced with
+      password and principal name. Please use keytab authentication for this
+      command since it must run without any interaction.</p><p>Example to create a keytab: ktutil -k /root/lam.keytab add -p
+      lam@LAM.LOCAL -e aes256-cts-hmac-sha1-96 -V 1</p><p>Security hint: Please secure your LAM Pro server since the new
+      passwords will be visible for a short term in the process list during
+      password change.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_kerberos2.png"></div></div><p><span class="bold"><strong>User management</strong></span></p><p>You can specify the principal/user name, ticket lifetimes and
+      expiration dates. Additionally, you can set various account
+      options.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_kerberos1.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2655"></a>MIT Kerberos (LAM Pro)</h3></div></div></div><p>You can manage your MIT Kerberos accounts with LAM Pro. Please add
+      the user module "Kerberos (mitKerberos)" to activate this feature. If
+      you want to manage entries based on the structural object class
+      "krbPrincipal" please use "Kerberos (mitKerberosStructural)"
+      instead.</p><p><span class="bold"><strong>Setup password changing</strong></span></p><p>LAM Pro cannot generate the password hashes itself because MIT
+      uses a proprietary format for them. Therefore, LAM Pro needs to call
+      kadmin/kadmin.local to set the password.</p><p>LAM will add "-q 'cpw -pw PASSWORD PRINCIPAL'" to the command to
+      set the password. Please use keytab authentication for this command
+      since it must run without any interaction.</p><p>Keytabs may be created with the "ktutil" application.</p><p>Security hint: Please secure your LAM Pro server since the new
+      passwords will be visible for a short term in the process list during
+      password change.</p><p>Please note that kadmin/kadmin.local often returns a successful
+      command even if errors occurred (e.g. password policy violations). You
+      need to test this before and if affected then write a wrapper script
+      around kadmin that returns non-zero return codes for errors.</p><p>Example commands:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>/usr/sbin/kadmin -k -t /home/www-data/apache.keytab -p
+          realm/changepwd</p></li><li class="listitem"><p>sudo /usr/sbin/kadmin.local</p></li></ul></div><div class="screenshot"><div class="mediaobject"><img src="images/mod_mitKerberos1.png"></div></div><p><span class="bold"><strong>User management</strong></span></p><p>You can specify the principal/user name, ticket lifetimes and
+      expiration dates. Additionally, you can set various account
+      options.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_mitKerberos2.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mailAliasesUser"></a>NIS mail aliases</h3></div></div></div><p>This module allows to add/remove the user in mail alias
+      entries.</p><p><span class="bold"><strong>Note:</strong></span> You need to activate the
+      <a class="link" href="ch04s16.html#mailAliases" title="NIS mail aliases">mail alias type</a> for this
+      module.</p><p>To activate mail aliases for users please select the module "Mail
+      aliases (nisMailAliasUser)":</p><div class="screenshot"><div class="mediaobject"><img src="images/nisMailAliasUser1.png"></div></div><p>On tab Module settings you can select if you want to set the user
+      name or email as recipient in alias entries.</p><div class="screenshot"><div class="mediaobject"><img src="images/nisMailAliasUser4.png"></div></div><p>Now you will see the mail aliases tab when editing an user.</p><p>The red cross will only remove the user from the alias entry. If
+      you click the trash can button then the whole alias entry (which may
+      contain other users) will be deleted.</p><div class="screenshot"><div class="mediaobject"><img src="images/nisMailAliasUser2.png"></div></div><p>You can add the user to existing alias entries or create
+      completely new ones.</p><div class="screenshot"><div class="mediaobject"><img src="images/nisMailAliasUser3.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2709"></a>Courier mail</h3></div></div></div><p>This module allows to add/remove the Courier extension for
+      users.</p><p><span class="bold"><strong>Configuration:</strong></span></p><p>Please activate the module Courier for users to enable this
+      extension. The Unix module is optional.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_courierUser2.png"></div></div><p><span class="bold"><strong>Usage:</strong></span></p><p>Your user tab will now show the Courier extension. This can be
+      added/removed any time.</p><p>Here you can configure the home directory in case the Unix module
+      is not activated. Additionally, mailbox folder, quota, server and
+      feature flags can be configured.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_courierUser1.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2727"></a>Qmail (LAM Pro)</h3></div></div></div><p>LAM Pro manages all qmail attributes for users. This includes mail
+      addresses, ID numbers and quota settings.</p><p>Please note that the main mail address is managed on tab
+      "Personal" if this module is active. Otherwise, it will be on the qmail
+      tab.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_qmail2.png"></div></div><p>You can hide several qmail options if you do not want to manage
+      them with LAM. This can be done on the module settings tab of your LAM
+      server profile.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_qmail1.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2740"></a>Mail routing</h3></div></div></div><p>LAM supports to manage mail routing for user accounts.</p><p>Module activation:</p><p>This feature can be activated by adding the "Mail routing" module
+      to the user account type in your server profile.</p><div class="screenshot"><div class="mediaobject"><img src="images/mailRoutingConfig.png"></div></div><p><span class="bold"><strong>Usage</strong></span></p><p>You can specify a routing address, the mail server and a number of
+      local addresses to route.</p><p>In case you want to add this extension by default for new users
+      there is an option in profile editor.</p><div class="screenshot"><div class="mediaobject"><img src="images/mailRouting.png"></div></div><p><span class="bold"><strong>Wildcards</strong></span></p><p>The module supports wildcards in the following input
+      fields:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Routing address</p></li><li class="listitem"><p>Local address</p></li></ul></div><p>See the other modules that you activated what wildcards they
+      provide (e.g. $user).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2766"></a>SSH keys</h3></div></div></div><p>You can manage your public keys for SSH in LAM if you installed
+      the <a class="ulink" href="http://code.google.com/p/openssh-lpk/" target="_top">LPK patch for
+      SSH</a> or setup AuthorizedKeysCommand (see below).</p><p>Activate the "SSH public key" module for users in the server
+      profile and you can add keys to your user entries.</p><div class="screenshot"><div><img src="images/ldapPublicKey2.png"></div></div><div class="screenshot"><div class="mediaobject"><img src="images/ldapPublicKey.png"></div></div><p><span class="bold"><strong>Example for
+      AuthorizedKeysCommand</strong></span></p><p>This will dynamically get the public key from LDAP. In this case
+      there is no need to patch SSH sources.</p><p>Create the authentication script in e.g.
+      /usr/bin/ldapAuthSSH.sh</p><div class="literallayout"><p><br>
+#!/bin/bash<br>
+uid=$1<br>
+server=ldap.domain.com<br>
+baseDN=ou=people,dc=example,dc=com<br>
+port=389<br>
+ldapsearch -x -h $server -p $port -b $baseDN -s sub "(&amp;(objectclass=posixAccount)(uid=$uid))" | sed -n '/^ /{H;d};/sshPublicKey:/x;$g;s/\n *//g;s/sshPublicKey: //gp'<br>
+<br>
+</p></div><p>Now setup your sshd_config</p><div class="literallayout"><p>AuthorizedKeysCommand /usr/bin/ldapAuthSSH.sh<br>
+AuthorizedKeysCommandUser root</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2784"></a>YubiKey</h3></div></div></div><p>You can manage your YubiKey ids with LAM. It supports the <a class="ulink" href="https://github.com/mludvig/yubikey-ldap" target="_top">yubiKeyUser schema</a>
+      or any other attribute mapping.</p><p><span class="bold"><strong>Configuration</strong></span></p><p>First, you need to activate the YubiKey module for users in your
+      LAM server profile.</p><div class="screenshot"><div><img src="images/mod_yubikey1.png"></div></div><p>Second, you need to specify which object class and attribute name
+      should be used.</p><p>Object class: If you have an object class just for the YubiKey ids
+      then enter it here. LAM will then provide options to add and remove it.
+      In case you reuse some existing attribute from e.g. inetOrgPerson please
+      leave object class name blank.</p><p>Attribute name: please enter the attribute name that is used for
+      the key ids.</p><div class="screenshot"><div><img src="images/mod_yubikey2.png"></div></div><p>You will then be able to manage the key ids for your users.</p><div class="screenshot"><div><img src="images/mod_yubikey3.png"></div></div><p><span class="bold"><strong>Self Service (LAM Pro)</strong></span></p><p>This will allow your users to update their own keys.</p><p>You need to configure the object class and attribute name first.
+      This is done on tab "Module settings" in self service profile.</p><p><span class="bold"><strong>Attention: </strong></span>Please note that both
+      fields are mandatory here. Even if you reused an attribute from some
+      existing object class you need to set it here. LAM needs this to detect
+      if the user can add keys.</p><div class="screenshot"><div><img src="images/mod_yubikey5.png"></div></div><p>Then add the YubiKey ids field to your self service profile on tab
+      "Page layout".</p><div class="screenshot"><div><img src="images/mod_yubikey4.png"></div></div><p>When a user with the specified object class logs in then the key
+      input fields are shown.</p><div class="screenshot"><div><img src="images/mod_yubikey6.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2815"></a>Authorized services</h3></div></div></div><p>You can setup PAM to check if a user is allowed to run a specific
+      service (e.g. sshd) by reading the LDAP attribute "authorizedService".
+      This way you can manage all allowed services via LAM.</p><p></p><p>To activate this PAM feature please setup your <span class="bold"><strong>/etc/libnss-ldap.conf</strong></span> and set
+      "pam_check_service_attr" to "yes".</p><p></p><p>Inside LAM you can now set the allowed services. You may also
+      setup default services in your account profiles.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_authorizedServices.png"></div></div><p>You can define a list of services in your LAM server profile that
+      is used for autocompletion.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_authorizedServices3.png"></div></div><p>The autocompletion will show all values that contains the entered
+      text. To display the whole list you can press backspace in the empty
+      input field. Of course, you can also insert a service name that is not
+      in the list.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_authorizedServices2.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2837"></a>IMAP mailboxes</h3></div></div></div><p>LAM may create and delete mailboxes on an IMAP server for your
+      user accounts. You will need an IMAP server that supports either SSL or
+      TLS for this feature.</p><p>To activate the mailbox management module please add the "Mailbox
+      (imapAccess)" module for the type user in your LAM server
+      profile:</p><div class="screenshot"><div class="mediaobject"><img src="images/imapAccess1.png"></div></div><p>Now configure the module on the tab "Module settings". Here you
+      can specify the IMAP server name, encryption options, the authentication
+      for the IMAP connection and the valid mail domains. LAM can use either
+      your LAM login password for the IMAP connection or display a dialog
+      where you need to enter the password. It is also possible to store the
+      admin password in your server profile. This is not recommended for
+      security reasons.</p><p>The user name can either be a fixed name (e.g. "admin") or it can
+      be generated with LDAP attributes of the LAM admin user. E.g. $uid$ will
+      be transformed to "myUser" if you login with
+      "uid=myUser,ou=people,dc=example,dc=com".</p><p>The mail domains specify for which accounts mailboxes may be
+      created/deleted. E.g. if you enter "lam-demo.org" then mailboxes can be
+      managed for "user@lam-demo.org" but not for "user@example.com". Use "*"
+      for any domain.</p><p>You need to install the SSL certificate of the CA that signed your
+      server certificate. This is usually done by installing the certificate
+      in /etc/ssl/certs. Different Linux distributions may offer different
+      ways to do this. For Debian/Ubuntu please copy the certificate in
+      "/usr/local/share/ca-certificates" and run "update-ca-certificates" as
+      root.</p><p>It is not recommended to disable the validation of IMAP server
+      certificates.</p><p>The prefix, user name attribute and path separator specifies how
+      your mailboxes are named (e.g. "user.myUser@localhost" or
+      "user/myUser"). Select the values depending on your IMAP server
+      settings.</p><p>You can specify a list of initial folder names to create for new
+      mailboxes. LAM will then create them with each new mailbox.</p><div class="screenshot"><div class="mediaobject"><img src="images/imapAccess2.png"></div></div><p>When you edit an user account then you will now see the tab
+      "Mailbox". Here you can create/delete the mailbox for this user.</p><p>Please note that mailbox creation via file upload is not possible
+      if you configured in LAM server profile to ask for the admin
+      password.</p><div class="screenshot"><div class="mediaobject"><img src="images/imapAccess3.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2862"></a>IP addresses (LAM Pro)</h3></div></div></div><p>You can manage the IP addresses of user accounts (e.g. assigned by
+      DHCP) with the ipHost module.</p><p><span class="bold"><strong>Configuration</strong></span></p><div class="screenshot"><div class="mediaobject"><img src="images/ipHostUser.png"></div></div><p><span class="bold"><strong>User editing</strong></span></p><div class="screenshot"><div class="mediaobject"><img src="images/ipHostUser1.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="s_account"></a>Account</h3></div></div></div><p>This is a very simple module to manage accounts based on the
+      object class "account". Usually, this is used for host accounts only.
+      Please pay attention that users based on the "account" object class
+      cannot have contact information (e.g. telephone number) as with
+      "inetOrgPerson".</p><p>You can enter a user/host name and a description for your
+      accounts.</p><div class="screenshot"><div class="mediaobject"><img src="images/mod_account.png"></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="idm2885"></a>OpenLDAP TOTP (LAM Pro)</h3></div></div></div><p>Use this module if you want to use OpenLDAP's builtin
+      2-factor-authentication with TOTP.</p><p>For admin interface add the OpenLDAP TOTP module:</p><div class="screenshot"><div><img src="images/mod_openldapTotp1.png"></div></div><p>When one of your users activates TOTP then you can see the serial
+      number and TOTP params in user edit screen.</p><p>Please note that the token can only be setup by the user in self
+      service. Admins are not able to setup tokens. They can just delete them
+      by removing the extension.</p><div class="screenshot"><div><img src="images/mod_openldapTotp2.png"></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch04.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch04.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch04s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 4. Managing entries in your LDAP directory </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Groups</td></tr></table></div></body></html>
